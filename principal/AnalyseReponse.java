@@ -85,7 +85,7 @@ public class AnalyseReponse extends Arbre{
 	public boolean agregat(String requete) {
 		String agregats = "( COUNT[(]| AVG( )*[(]| MIN[(]| MAX[(]| SUM[(])";
 		/*
-		*attention, regex a retravailler , truc du genre [,| ]COUNT([(.+)][,| ]
+		*attention, regex a retravailler , truc du genre [,| ]COUNT([(.+)])[,| ]
 		*/
 		pattern = Pattern.compile(agregats);
 		matcher = pattern.matcher(requete.toUpperCase());
@@ -175,6 +175,11 @@ public class AnalyseReponse extends Arbre{
 		Arbre arbre = new Arbre();
 		return arbre;
 	}
+	
+	/*
+	*split le while, detection AS, jointure / operateur / comparateur / mot cle SQL
+	*
+	*/
 	public Arbre decomposeArbre(String requete) {
 		Arbre decomposition = new Arbre();
 		requete = "SELECT t-eleve,al^pha.t-prof, COUNT(rotie)      \n FROM TABLE WHILE eleve = 2";
