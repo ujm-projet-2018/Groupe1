@@ -31,7 +31,7 @@ public class AnalyseReponse extends Arbre{
 		super();
 		this.reponse = reponse;
 	}
-
+ 
 
 	public AnalyseReponse(Arbre reponse, String zone) {
 		super();
