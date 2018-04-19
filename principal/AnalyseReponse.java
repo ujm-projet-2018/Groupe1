@@ -84,6 +84,9 @@ public class AnalyseReponse extends Arbre{
 	 */
 	public boolean agregat(String requete) {
 		String agregats = "( COUNT[(]| AVG( )*[(]| MIN[(]| MAX[(]| SUM[(])";
+		/*
+		*attention, regex a retravailler , truc du genre [,| ]COUNT([(.+)][,| ]
+		*/
 		pattern = Pattern.compile(agregats);
 		matcher = pattern.matcher(requete.toUpperCase());
 		if(matcher.find()) {
@@ -176,12 +179,12 @@ public class AnalyseReponse extends Arbre{
 		Arbre decomposition = new Arbre();
 		requete = "SELECT t-eleve,al^pha.t-prof, COUNT(rotie)      \n FROM TABLE WHILE eleve = 2";
 		requete = filtre(requete);
-		System.out.println("La requete analysée est : "+requete);
+		System.out.println("La requete analysÃ©e est : "+requete);
 
 		pattern = Pattern.compile("SELECT (.+)FROM (.+)");
 		matcher = pattern.matcher(requete);
 		if(matcher.find()) {
-			System.out.println("SELECT détecter");
+			System.out.println("SELECT dÃ©tecter");
 			/**
 			 * La requete commence donc par un SELECT
 			 * On verifie si il existe une fonction d'agregats
@@ -261,7 +264,7 @@ public class AnalyseReponse extends Arbre{
 			 */
 		}else {
 			/**
-			 * La requete n'est pas un SELECT, testons les autres possibilité
+			 * La requete n'est pas un SELECT, testons les autres possibilitÃ©
 			 */
 			pattern = Pattern.compile("INSERT INTO (.+)");
 			matcher = pattern.matcher(requete);
