@@ -199,8 +199,7 @@ public class AnalyseReponse extends Arbre{
 				+ "|[ ]*IS NOT NULL[ ]*"
 				+ "|[ ]*AND[ ]*"
 				+ "|[ ]*OR[ ]*"
-				+ "|[,| |, ]MAX[(](.+)[)]"
-				+ "|[,| |, ]SUM[(](.+)[)]";
+				+ "|[,| |, ]MAX[(](.+)[)]";
 		pattern = Pattern.compile(agregats);
 		matcher = pattern.matcher(requete);
 		if(matcher.find()) {
@@ -208,72 +207,122 @@ public class AnalyseReponse extends Arbre{
 		}
 		return false;
 	}
-	
-	
+
+
 	public void analyseWhere(String requete, Arbre arbre) {
+		requete=" t_zzzlev.elev=t_prof.prof AND t_en.pro=tgh.tf AND id<2";
 		System.out.println("(where) La requete analysée est : "+requete);
 		arbre.ajouter(SQL.WHERE);
-		String tabWhere[];
-		pattern = Pattern.compile("AND");
-		tabWhere = pattern.split(requete);
-		ArrayList<String> arrayAttributs = new ArrayList<>();
-		System.out.println("Les differents attibuts :");
-		for(int i=0;i<tabWhere.length;i++) {
-			System.out.println(tabWhere[i]);
-		}
-		for(int i=0;i<tabWhere.length;i++) {
-			arrayAttributs.add(tabWhere[i]);
-		}
+		ArrayList<String> jointure = new ArrayList<>();
 		/*
-		 * ici on a mis tout les condition du where dans un tableau, maintenant on va separer ce tableau 
-		 * selon si il contient des jointures ou des operateur de comparaison
+		 * on va d'abord chercher si il existe des jointures
+		 * donc de la forme XXX.XXX = XXX.XXX
+		 * 
 		 */
-		ArrayList<String> tabOperateur = new ArrayList<>();
-		Boolean tabOperateurExiste = false;
-		if(opComparaison(requete)) {
-			System.out.println("Il y a un/des operateurs de comparaison");
-			tabOperateurExiste = true;
-			for(int i=0;i<arrayAttributs.size();i++) {
-				System.out.println(arrayAttributs.get(i)+" est analysée");
-				if(opComparaison(arrayAttributs.get(i))){//on ajoute un espace 
-					System.out.println("c'est un operateur");
-					tabOperateur.add(arrayAttributs.get(i));
-					arrayAttributs.remove(i);
-				}
+		pattern = Pattern.compile("([a-zA-Z0-9_-]+)[.]([a-zA-Z0-9_-]+)=([a-zA-Z0-9_-]+)[.]([a-zA-Z0-9_-]+)");
+		/*
+		 * regex dessus permet de reconnaitre tout mot SANS ESPACE compose de lettre 
+		 * de chiffre ou de - et _
+		 */
+		matcher = pattern.matcher(requete);
+		while(matcher.find()) {
+			String test = matcher.group();
+			jointure.add(test);
+			System.out.println("La jointures detectee est : "+test);
+			System.out.println("La requete est : "+requete);
+			requete = requete.replace(test, "");
+			System.out.println("La requete nettoye est : "+requete);
+		}
+		System.out.println("La liste des jointures est : "+jointure.toString());
+		Collections.sort(jointure);
+		System.out.println("La liste des jointures est : "+jointure.toString());
+		/*
+		 * on a maintenant toutes les jointures de la requete dans une liste
+		 * on les ajoute a l'arbre
+		 */
+		arbre.ajouter(SQL.JOINTURE);
+		arbre.ajouter(jointure.toString());
+		/*
+		 * on ajoute directement la liste
+		 * on pourra tres facilement comparer leurs taille et savoir si il manque des jointures
+		 * ou pas 
+		 */
+
+
+		/*
+		 * on teste si il reste des choses dans requete
+		 */
+		//requete = filtre(requete);
+		System.out.println("etat de la requete traitee : "+requete);
+		//	pattern = Pattern.compile("[ ]*AND[ ]*");
+
+		pattern = Pattern.compile("([a-zA-Z0-9_+-]+)"
+				+ "[ ]*"
+				+ "([=|<>|!=|<|>|<=|>=])"
+				+ "[ ]*"
+				+ "([a-zA-Z0-9_+-]+)");
+		matcher = pattern.matcher(requete);
+		if(matcher.find()) {
+			System.out.println("Operateur de comparaison trouvee !"
+					+ "\n >>> "+matcher.group());
+			System.out.println("Le group 1 est : "+matcher.group(1)+" l'operateur est "+ matcher.group(2)+",et le groupe 3 est "+matcher.group(3));
+			String operateur = matcher.group(2);
+			String p1 = matcher.group(1);
+			String p2 = matcher.group(3);
+			/*
+			 * on a trouve une operation de comparaison
+			 * on ajoute dans l'arbre et on supprime
+			 */
+			arbre.ajouter(SQL.COMPARAISON);
+			ArrayList<String> temp = new ArrayList<>();
+			switch(operateur) {
+			case(SQL.EGAL):
+				arbre.ajouter(SQL.EGAL);
+			temp.add(p1);
+			temp.add(p2);
+			arbre.ajouter(temp.toString());
+			break;
+			case(SQL.DIFF1):
+				temp.add(p1);
+			temp.add(p2);
+			Collections.sort(temp);
+			arbre.ajouter(SQL.DIFF1);
+			arbre.ajouter(temp.toString());
+			break;
+			case(SQL.DIFF2):
+				temp.add(p1);
+			temp.add(p2);
+			Collections.sort(temp);
+			arbre.ajouter(SQL.DIFF1);
+			arbre.ajouter(temp.toString());
+			break;
+			case(SQL.SUP):
+				temp.add(p1);
+			temp.add(p2);
+			arbre.ajouter(SQL.SUP);
+			arbre.ajouter(temp.toString());
+			break;
+			case(SQL.INF):
+				temp.add(p1);
+			temp.add(p2);
+			arbre.ajouter(SQL.INF);
+			arbre.ajouter(temp.toString());
+			break;
+			case(SQL.SUP_EGAL):
+				temp.add(p1);
+			temp.add(p2);
+			arbre.ajouter(SQL.SUP_EGAL);
+			arbre.ajouter(temp.toString());
+			break;
+			case(SQL.INF_EGAL):
+				temp.add(p1);
+			temp.add(p2);
+			arbre.ajouter(SQL.INF_EGAL);
+			arbre.ajouter(temp.toString());
+			break;
 			}
+			
 		}
-
-		/*
-		 * on a maintenant deux liste :
-		 * (tabMotCle si il y a des agregats) et arrayAttribut
-		 * on va les trier et les ajouter a l'arbre
-		 */
-		Collections.sort(arrayAttributs);
-		if(tabOperateurExiste) {
-			Collections.sort(tabOperateur);
-			//tabMotCle.addAll(arrayAttributs);
-		}
-
-
-		System.out.println("Les tables sont :");
-		System.out.println("tabOperateur : "+tabOperateur);
-		System.out.println("arrayAttribut : "+arrayAttributs);
-
-		System.out.println("Et donc :");
-		if(tabOperateurExiste) {
-		//System.out.println(tabMotCle);
-			arbre.ajouter("WHERE");
-			//decomposition.ajouter(tabMotCle.toString());
-		}
-		System.out.println(arrayAttributs);
-		arbre.ajouter("WHERE");
-		arbre.ajouter(arrayAttributs.toString());
-
-
-		System.out.println(decomposition);
-		System.out.println("apres analyse du where :");
-		//analyseFrom(apresFrom, decomposition);
-		System.out.println(decomposition);
 	}
 
 
