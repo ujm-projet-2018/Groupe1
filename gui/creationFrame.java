@@ -5,6 +5,8 @@
  */
 package gui;
 
+import exercice.Exercice;
+import exercice.Question;
 import java.io.File;
 import javax.swing.JFileChooser;
 
@@ -13,15 +15,15 @@ import javax.swing.JFileChooser;
  * @author anis
  */
 public class creationFrame extends javax.swing.JFrame {
-    
+
     // not graphicals attributes
-    private exercice.Exercice exo;
-    private Integer nbQuestion;
+    private Exercice exo;
+
     /**
      * Creates new form creatFrame
      */
     public creationFrame() {
-        nbQuestion = 1;
+        exo = new Exercice();
         initComponents();
         setVisible(true);
     }
@@ -49,6 +51,9 @@ public class creationFrame extends javax.swing.JFrame {
         tReponse = new javax.swing.JTextArea();
         bAjouterQuestion = new javax.swing.JButton();
         lNbQuestions = new javax.swing.JLabel();
+        bQSuivante = new javax.swing.JButton();
+        bQPrecedente = new javax.swing.JButton();
+        bSupprQ = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Création d'exercice");
@@ -103,7 +108,12 @@ public class creationFrame extends javax.swing.JFrame {
         });
 
         bValider.setFont(new java.awt.Font("Ubuntu", 1, 18)); // NOI18N
-        bValider.setText("VALIDER");
+        bValider.setText("Valider E.");
+        bValider.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                bValiderMouseClicked(evt);
+            }
+        });
 
         lQuestions.setFont(new java.awt.Font("Ubuntu", 0, 18)); // NOI18N
         lQuestions.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -133,7 +143,7 @@ public class creationFrame extends javax.swing.JFrame {
         jScrollPane3.setViewportView(tReponse);
 
         bAjouterQuestion.setFont(new java.awt.Font("Ubuntu", 0, 17)); // NOI18N
-        bAjouterQuestion.setText("Ajouter question");
+        bAjouterQuestion.setText("Ajouter Q.");
         bAjouterQuestion.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 bAjouterQuestionMouseClicked(evt);
@@ -141,7 +151,30 @@ public class creationFrame extends javax.swing.JFrame {
         });
 
         lNbQuestions.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lNbQuestions.setText("n°1");
+        lNbQuestions.setText("1");
+
+        bQSuivante.setText("+");
+        bQSuivante.setToolTipText("");
+        bQSuivante.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                bQSuivanteMouseClicked(evt);
+            }
+        });
+
+        bQPrecedente.setText("-");
+        bQPrecedente.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                bQPrecedenteMouseClicked(evt);
+            }
+        });
+
+        bSupprQ.setText("X");
+        bSupprQ.setToolTipText("");
+        bSupprQ.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                bSupprQMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -150,26 +183,31 @@ public class creationFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lQuestions, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(tCheminFichierSQL)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(bRecherche, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 874, Short.MAX_VALUE)
-                            .addComponent(lPreambule, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lFichierSQL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 717, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(bValider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(bAjouterQuestion, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lNbQuestions, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lNbQuestions, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(bSupprQ, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(bQSuivante, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(bQPrecedente, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)))
+                            .addComponent(bAjouterQuestion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(bValider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(lQuestions, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 874, Short.MAX_VALUE)
+                        .addComponent(lPreambule, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lFichierSQL, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                            .addComponent(tCheminFichierSQL, javax.swing.GroupLayout.PREFERRED_SIZE, 689, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(bRecherche, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -188,17 +226,26 @@ public class creationFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lQuestions, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 52, Short.MAX_VALUE)
-                    .addComponent(lNbQuestions, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(bQSuivante, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
+                            .addComponent(lNbQuestions, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(bQPrecedente, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(bSupprQ, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGap(14, 14, 14)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(bAjouterQuestion, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(3, 3, 3)
-                        .addComponent(bValider, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(bValider, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         tCheminFichierSQL.getAccessibleContext().setAccessibleName("tCheminFichierSQL");
@@ -227,8 +274,10 @@ public class creationFrame extends javax.swing.JFrame {
         final JFileChooser fc = new JFileChooser();
         fc.showOpenDialog(this);
         File file = fc.getSelectedFile();
-        tCheminFichierSQL.setText(file.getAbsolutePath());
-        
+        if (file != null) {
+            String path = file.getAbsolutePath();
+            tCheminFichierSQL.setText(path);
+        }
     }//GEN-LAST:event_bRechercheMouseClicked
 
     private void tQuestionFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tQuestionFocusGained
@@ -240,12 +289,133 @@ public class creationFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_tReponseFocusGained
 
     private void bAjouterQuestionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bAjouterQuestionMouseClicked
-        lNbQuestions.setText("n°"+(++nbQuestion));
+        String q = tQuestion.getText();
+        String r = tReponse.getText();
+        String s_numQ = lNbQuestions.getText();
+        int numQ = Integer.parseInt(s_numQ);
+        int nbQ = exo.getNbQuestions();
+
+        String enonce = tQuestion.getText();
+        String reponse = tReponse.getText();
+        if ((numQ - 1) == nbQ) { // ajout de question
+            if ((!q.equalsIgnoreCase("")) && (!r.equalsIgnoreCase(""))) {
+                Question question = new Question(enonce, reponse);
+                exo.ajouterQuestion(question);
+                nbQ = exo.getNbQuestions();
+                lNbQuestions.setText("" + (nbQ + 1));
+                // System.err.println("etat 1");
+                tQuestion.setText("");
+                tReponse.setText("");
+            }
+        } else { // modif de question
+            if ((!q.equalsIgnoreCase("")) && (!r.equalsIgnoreCase(""))) {
+                exo.getQuestions().get(numQ - 1).setEnonce(enonce);
+                exo.getQuestions().get(numQ - 1).setReponse(reponse);
+                lNbQuestions.setText("" + (nbQ + 1));
+                // System.err.println("etat 2");
+                tQuestion.setText("");
+                tReponse.setText("");
+            }
+        }
+
+        // affichage exo
+        System.out.println("EXO : \n" + exo);
     }//GEN-LAST:event_bAjouterQuestionMouseClicked
 
     private void tPreambuleKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tPreambuleKeyPressed
     }//GEN-LAST:event_tPreambuleKeyPressed
 
+    private void bValiderMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bValiderMouseClicked
+        exo.setPreambule(tPreambule.getText());
+        
+        
+        System.err.println("");
+        System.err.println("");
+        System.err.println("");
+        System.err.println("");
+        System.err.println("");
+        System.err.println("");
+        System.err.println("");
+        System.err.println("");
+        System.err.println("");
+        System.err.println(exo);
+        
+    }//GEN-LAST:event_bValiderMouseClicked
+
+    
+    /**
+     * rempli les champs enonce et reponse avec le contenu de la question suivante
+     * @param evt 
+     */
+    private void bQSuivanteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bQSuivanteMouseClicked
+        String s_numQ = lNbQuestions.getText();
+        int numQ = Integer.parseInt(s_numQ);
+        int nbQ = exo.getNbQuestions();
+
+        if (/*pos sur nouvelle ou dernière Q*/(numQ >= nbQ)) { // si question suivante n'existe pas
+            System.err.println("Nouvelle question");
+            lNbQuestions.setText("" + (nbQ + 1));
+            tQuestion.setText("");
+            tReponse.setText("");
+        } else { // si elle existe
+            Question q = exo.getQuestions().get(numQ); // question suivante
+            String enonce = q.getEnonce();
+            String reponse = q.getReponse();
+            tQuestion.setText(enonce);
+            tReponse.setText(reponse);
+            lNbQuestions.setText("" + (numQ + 1));
+        }
+    }//GEN-LAST:event_bQSuivanteMouseClicked
+
+    /**
+     * rempli les champs enonce et reponse avec le contenu de la question précédente
+     * @param evt 
+     */
+    private void bQPrecedenteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bQPrecedenteMouseClicked
+        String s_numQ = lNbQuestions.getText();
+        int numQ = Integer.parseInt(s_numQ);
+        int nbQ = exo.getNbQuestions();
+
+        if (/*pos sur nouvelle ou première Q*/(numQ == 1)) { // si question précédente n'existe pas
+            System.err.println("Question précédente n'existe pas");
+        } else { // si elle existe
+            Question q = exo.getQuestions().get(numQ - 2); // question précédente (numQ-1 => question courante)
+            String enonce = q.getEnonce();
+            String reponse = q.getReponse();
+            tQuestion.setText(enonce);
+            tReponse.setText(reponse);
+            lNbQuestions.setText("" + (numQ - 1));
+        }
+    }//GEN-LAST:event_bQPrecedenteMouseClicked
+
+    /**
+     * supprime la question courante si elle a déjà été ajoutée
+     * @param evt 
+     */
+    private void bSupprQMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bSupprQMouseClicked
+        String s_numQ = lNbQuestions.getText();
+        int numQ = Integer.parseInt(s_numQ); // numéro de question affiché
+        int nbQ = exo.getNbQuestions(); // nombre de questions déjà enregistrées dans l'exercice
+
+        if (/*placé sur nouvelle question*/(numQ > nbQ)) { // si la question courante n'existe pas
+            System.err.println("Aucune question à supprimer");
+        } else { // si elle existe
+            exo.supprimerQuestion(numQ - 1); // suppression de la question courante
+            nbQ = exo.getNbQuestions();
+            lNbQuestions.setText("" + (nbQ + 1));
+            tQuestion.setText("");
+            tReponse.setText("");
+        }
+    }//GEN-LAST:event_bSupprQMouseClicked
+
+    
+    /**
+     * ##############################################
+     * #                                            #
+     * #         LANCEMENT DE L'APPLICATION         #
+     * #                                            #
+     * ##############################################
+     */
     /**
      * @param args the command line arguments
      */
@@ -274,7 +444,7 @@ public class creationFrame extends javax.swing.JFrame {
         //</editor-fold>
         //</editor-fold>
 
-        /* Create and display the form */
+        /* création et affichage de la fenêtre */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new creationFrame().setVisible(true);
@@ -282,9 +452,26 @@ public class creationFrame extends javax.swing.JFrame {
         });
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    /**
+     * VARIABLES AUTOMATIQUEMENT GÉNÉRÉES PAR NETBEAN (cf onglet "Design")
+     */
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bAjouterQuestion;
+    private javax.swing.JButton bQPrecedente;
+    private javax.swing.JButton bQSuivante;
     private javax.swing.JButton bRecherche;
+    private javax.swing.JButton bSupprQ;
     private javax.swing.JButton bValider;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
