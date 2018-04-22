@@ -17,7 +17,7 @@ import javax.swing.JFileChooser;
 public class creationFrame extends javax.swing.JFrame {
 
     // not graphicals attributes
-    private Exercice exo;
+    private static Exercice exo;
 
     /**
      * Creates new form creatFrame
@@ -26,6 +26,10 @@ public class creationFrame extends javax.swing.JFrame {
         exo = new Exercice();
         initComponents();
         setVisible(true);
+    }
+
+    public static Exercice getExo() {
+        return exo;
     }
 
     /**
@@ -327,8 +331,7 @@ public class creationFrame extends javax.swing.JFrame {
 
     private void bValiderMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bValiderMouseClicked
         exo.setPreambule(tPreambule.getText());
-        
-        
+
         System.err.println("");
         System.err.println("");
         System.err.println("");
@@ -339,13 +342,22 @@ public class creationFrame extends javax.swing.JFrame {
         System.err.println("");
         System.err.println("");
         System.err.println(exo);
+
+        /*serailisation*/
+        System.err.println("exportation...");
+        exo.exportation("exercice.ser");
         
+        /*test lecture fichier serialisé*/
+        System.err.println("importation...");
+        Exercice e = creationFrame.getExo().importation("exercice.ser");
+        System.out.println(e);
     }//GEN-LAST:event_bValiderMouseClicked
 
-    
     /**
-     * rempli les champs enonce et reponse avec le contenu de la question suivante
-     * @param evt 
+     * rempli les champs enonce et reponse avec le contenu de la question
+     * suivante
+     *
+     * @param evt
      */
     private void bQSuivanteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bQSuivanteMouseClicked
         String s_numQ = lNbQuestions.getText();
@@ -368,8 +380,10 @@ public class creationFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_bQSuivanteMouseClicked
 
     /**
-     * rempli les champs enonce et reponse avec le contenu de la question précédente
-     * @param evt 
+     * rempli les champs enonce et reponse avec le contenu de la question
+     * précédente
+     *
+     * @param evt
      */
     private void bQPrecedenteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bQPrecedenteMouseClicked
         String s_numQ = lNbQuestions.getText();
@@ -390,7 +404,8 @@ public class creationFrame extends javax.swing.JFrame {
 
     /**
      * supprime la question courante si elle a déjà été ajoutée
-     * @param evt 
+     *
+     * @param evt
      */
     private void bSupprQMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bSupprQMouseClicked
         String s_numQ = lNbQuestions.getText();
@@ -408,13 +423,9 @@ public class creationFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_bSupprQMouseClicked
 
-    
     /**
-     * ##############################################
-     * #                                            #
-     * #         LANCEMENT DE L'APPLICATION         #
-     * #                                            #
-     * ##############################################
+     * ############################################## # # # LANCEMENT DE
+     * L'APPLICATION # # # ##############################################
      */
     /**
      * @param args the command line arguments
@@ -445,24 +456,18 @@ public class creationFrame extends javax.swing.JFrame {
         //</editor-fold>
 
         /* création et affichage de la fenêtre */
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        /*java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new creationFrame().setVisible(true);
+
             }
         });
+*/
+        
+        creationFrame f = new creationFrame();
+        
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     /**
      * VARIABLES AUTOMATIQUEMENT GÉNÉRÉES PAR NETBEAN (cf onglet "Design")
      */
