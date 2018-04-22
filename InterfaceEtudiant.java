@@ -22,12 +22,8 @@ import jsyntaxpane.DefaultSyntaxKit;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-
-/**
- *
- * @author Quentin
- */
+ 
+//Classe qui crée l'inteface étudiant
 public class InterfaceEtudiant extends java.awt.Frame {
 
     /**
@@ -67,7 +63,7 @@ public class InterfaceEtudiant extends java.awt.Frame {
         ennonceExercice.setBackground(new java.awt.Color(249, 249, 249));
         ennonceExercice.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
         ennonceExercice.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        ennonceExercice.setText("Ennoncé de l'exercice");
+        ennonceExercice.setText("EnnoncÃ© de l'exercice");
         ennonceExercice.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
@@ -89,7 +85,7 @@ public class InterfaceEtudiant extends java.awt.Frame {
         });
 
         boutonExercicePrec1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        boutonExercicePrec1.setText("Exercice pr�c�dent");
+        boutonExercicePrec1.setText("Exercice précédent");
         boutonExercicePrec1.setMaximumSize(new java.awt.Dimension(110, 25));
         boutonExercicePrec1.setMinimumSize(new java.awt.Dimension(110, 25));
         boutonExercicePrec1.setPreferredSize(new java.awt.Dimension(110, 25));
@@ -124,7 +120,7 @@ public class InterfaceEtudiant extends java.awt.Frame {
         });
 
         boutonValider.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
-        boutonValider.setText("Valider la r�ponse");
+        boutonValider.setText("Valider la réponse");
         boutonValider.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 boutonValiderActionPerformed(evt);
