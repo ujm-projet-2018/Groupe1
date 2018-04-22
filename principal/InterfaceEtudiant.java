@@ -4,6 +4,7 @@ import javax.swing.JScrollPane;
 
 import java.awt.BorderLayout;
 import java.awt.Button;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -12,6 +13,8 @@ import java.awt.LayoutManager;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.WindowConstants;
 
 import jsyntaxpane.DefaultSyntaxKit;
@@ -55,7 +58,7 @@ public class InterfaceEtudiant extends java.awt.Frame {
         fenetreIndice = new javax.swing.JTextField();
         boutonTable = new javax.swing.JButton();
         boutonValider = new javax.swing.JButton();
-
+        
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 exitForm(evt);
@@ -174,8 +177,12 @@ public class InterfaceEtudiant extends java.awt.Frame {
                 .addContainerGap())
         );
 
+    
+        
+        editeurTexte.setText("Votre code ici");
         add(panneau, java.awt.BorderLayout.CENTER);
-
+        panneau.setVisible(true);
+      //  panneauLayout.add
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -198,11 +205,33 @@ public class InterfaceEtudiant extends java.awt.Frame {
         // TODO add your handling code here:
     }//GEN-LAST:event_boutonTableActionPerformed
 
+    public void ecrireIndice(String indice) {
+    	fenetreIndice.setForeground(new Color(64, 64, 64));
+    	fenetreIndice.setText(indice);
+    }
+    
+    public void ecrireErreur(String erreur) {
+    	fenetreIndice.setForeground(new Color(155, 20, 20));
+    	fenetreIndice.setText(erreur);
+    }
     private void boutonValiderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonValiderActionPerformed
         // TODO add your handling code here:
     	System.out.println("CLIC SUR VALIDER");
+    	String requeteEleve = editeurTexte.getText();
+    	System.out.println(requeteEleve);
+    	Arbre arbre = new Arbre();
+    	AnalyseReponse analyse = new AnalyseReponse();
+    	analyse.decomposeArbre(requeteEleve);
+    	analyse.decomposeArbre(exo.getTitre());
+    	ecrireErreur("");
+    	/*
+    	 * 
+    	 * 
+    	 */
+    	
     }//GEN-LAST:event_boutonValiderActionPerformed
 
+    Exercice exo = new Exercice("titre");
     /**
      * @param args the command line arguments
      */
@@ -215,8 +244,8 @@ public class InterfaceEtudiant extends java.awt.Frame {
      * 
      */
    
-    
     /*
+    
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -236,6 +265,11 @@ public class InterfaceEtudiant extends java.awt.Frame {
  * 
  * 
  */
+    
+    public void ecrireEnonce(String enonce) {
+    	ennonceExercice.setText(enonce);
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton boutonExercicePrec1;
     private javax.swing.JButton boutonExerciceSuivant;
@@ -248,4 +282,6 @@ public class InterfaceEtudiant extends java.awt.Frame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel panneau;
     // End of variables declaration//GEN-END:variables
+    
+
 }

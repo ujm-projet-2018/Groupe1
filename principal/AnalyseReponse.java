@@ -2,6 +2,8 @@ package projetTutore;
 
 import java.awt.List;
 import java.lang.reflect.Array;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -209,11 +211,14 @@ public class AnalyseReponse extends Arbre{
 	}
 
 
+	
 	public void analyseWhere(String requete, Arbre arbre) {
+
 		requete=" t_zzzlev.elev=t_prof.prof AND t_en.pro=tgh.tf AND id<2";
-		System.out.println("(where) La requete analysÃ©e est : "+requete);
+		System.out.println("(where) La requete analysée est : "+requete);
 		arbre.ajouter(SQL.WHERE);
 		ArrayList<String> jointure = new ArrayList<>();
+		
 		/*
 		 * on va d'abord chercher si il existe des jointures
 		 * donc de la forme XXX.XXX = XXX.XXX
@@ -262,13 +267,14 @@ public class AnalyseReponse extends Arbre{
 				+ "[ ]*"
 				+ "([a-zA-Z0-9_+-]+)");
 		matcher = pattern.matcher(requete);
-		if(matcher.find()) {
+		while(matcher.find()) {
 			System.out.println("Operateur de comparaison trouvee !"
 					+ "\n >>> "+matcher.group());
 			System.out.println("Le group 1 est : "+matcher.group(1)+" l'operateur est "+ matcher.group(2)+",et le groupe 3 est "+matcher.group(3));
 			String operateur = matcher.group(2);
 			String p1 = matcher.group(1);
 			String p2 = matcher.group(3);
+			String p = matcher.group();
 			/*
 			 * on a trouve une operation de comparaison
 			 * on ajoute dans l'arbre et on supprime
@@ -321,7 +327,16 @@ public class AnalyseReponse extends Arbre{
 			arbre.ajouter(temp.toString());
 			break;
 			}
+			requete = requete.replace(p,"");
+			System.out.println("etat de la requete : "+ requete);
 			
+			/*
+			 * 
+			 * si il ne reste que des AND, c'est fini
+			 * 
+			 * a faire : traitement des OR et LIKE et IN
+			 * 
+			 */
 		}
 	}
 
@@ -372,12 +387,12 @@ public class AnalyseReponse extends Arbre{
 		Arbre decomposition = new Arbre();
 		requete = "SELECT t-eleve,alpha.t-prof,COUNT(rotie)      \n FROM TABLE,eleve WHERE eleve = 2 AND prof=7 AND prof.nom=eleve.nom";// WHERE eleve = 2
 		requete = filtre(requete);
-		System.out.println("La requete analysÃ©e est : "+requete);
+		System.out.println("La requete analysée est : "+requete);
 
 		pattern = Pattern.compile("SELECT (.+)FROM (.+)");
 		matcher = pattern.matcher(requete);
 		if(matcher.find()) {
-			System.out.println("SELECT dÃ©tecter");
+			System.out.println("SELECT détecter");
 			/**
 			 * La requete commence donc par un SELECT
 			 * On verifie si il existe une fonction d'agregats
@@ -409,7 +424,7 @@ public class AnalyseReponse extends Arbre{
 				//une liste de mot cle type SUM, COUNT ... et une liste d'attibut
 				tabMotCleExiste = true;
 				for(int i=0;i<arrayAttributs.size();i++) {
-					System.out.println(arrayAttributs.get(i)+" est analysÃ©e");
+					System.out.println(arrayAttributs.get(i)+" est analysée");
 					if(distinct(arrayAttributs.get(i)) || agregat(" "+arrayAttributs.get(i))){//on ajoute un espace 
 						System.out.println("c'est un agregats");
 						tabMotCle.add(arrayAttributs.get(i));
@@ -456,7 +471,7 @@ public class AnalyseReponse extends Arbre{
 
 		}else {
 			/**
-			 * La requete n'est pas un SELECT, testons les autres possibilitÃ©
+			 * La requete n'est pas un SELECT, testons les autres possibilité
 			 */
 			pattern = Pattern.compile("INSERT INTO (.+)");
 			matcher = pattern.matcher(requete);
@@ -490,4 +505,53 @@ public class AnalyseReponse extends Arbre{
 		}
 		return decomposition;
 	}
+	
+	public void compareReponse(String requeteEleve, String requeteProf) {
+		/*
+		if(estSelect(requeteProf) && estSelect(requeteEleve)) {
+			try {
+				ResultSet rsEleve = Test.bdd.reqSQL(requeteEleve, 's');
+				ResultSet rsProf = Test.bdd.reqSQL(requeteProf, 's');
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
+				Test.ie.ecrireErreur("Erreur SQL !");
+			}
+			
+		}else {
+			Test.ie.ecrireErreur("Ce ne sont pas des SELECT !");
+			return;
+		}
+		Test.ie.ecrireEnonce("Ce sont bien des SELECT");
+*/
+		
+		Arbre arbreProf = decomposeArbre(requeteProf);
+		Arbre arbreEleve = decomposeArbre(requeteEleve);
+		Arbre actuelProf;
+		Arbre actuelEleve;
+		String filsProf;
+		String filsEleve;
+		
+		switch(arbreProf.getElement()) {
+		case(SQL.SELECT):
+			if(arbreEleve.getElement()!=SQL.SELECT) {
+				Test.ie.ecrireErreur("Mauvais type de requete !");
+				return;
+			}
+		/*
+		 * si on est la c'est que les 2 requete sont des select
+		 */
+		Test.ie.ecrireErreur("ok type de requete !");
+		}
+		
+	}
+	
+	
+	public String filsSuivant(String filsActuel) {
+		if(filsActuel==SQL.FILS_DROIT) {
+			return SQL.FILS_GAUCHE;
+		}
+		return SQL.FILS_DROIT;
+	}
+	
 }

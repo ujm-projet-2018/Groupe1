@@ -11,5 +11,15 @@ public interface SQL {
 	String MAX = "MAX";
 	String SUM = "SUM";
 	String ATTRIBUT = "ATTRIBUT";
-
+	String JOINTURE = "JOINTURE";
+	String COMPARAISON = "COMPARAISON";
+	String EGAL = "=";
+	String SUP = ">";
+	String INF = "<";
+	String SUP_EGAL = ">=";
+	String INF_EGAL = "<=";
+	String DIFF1 = "<>";
+	String DIFF2 = "!=";
+	String FILS_DROIT="DROITE";
+	String FILS_GAUCHE="GAUCHE";
 }

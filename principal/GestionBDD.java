@@ -22,7 +22,7 @@ public class GestionBDD implements General {
 		c =DriverManager.getConnection(url,identifiant,mdp);
 		c.setAutoCommit(false);
 		st=c.createStatement();
-		st.executeQuery("START TRANSACTION");
+		
 	}
 
 	/**
