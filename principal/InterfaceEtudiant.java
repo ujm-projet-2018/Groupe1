@@ -9,12 +9,15 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.LayoutManager;
+import java.awt.event.ActionEvent;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 import javax.xml.transform.TransformerConfigurationException;
 
@@ -56,7 +59,7 @@ public class InterfaceEtudiant extends java.awt.Frame {
 		boutonExerciceSuivant = new javax.swing.JButton();
 		boutonExercicePrec1 = new javax.swing.JButton();
 		boutonIndice = new javax.swing.JButton();
-		fenetreIndice = new javax.swing.JTextField();
+		fenetreIndice = new javax.swing.JTextArea();
 		boutonTable = new javax.swing.JButton();
 		boutonValider = new javax.swing.JButton();
 
@@ -97,7 +100,21 @@ public class InterfaceEtudiant extends java.awt.Frame {
 		boutonExercicePrec1.setMaximumSize(new java.awt.Dimension(110, 25));
 		boutonExercicePrec1.setMinimumSize(new java.awt.Dimension(110, 25));
 		boutonExercicePrec1.setPreferredSize(new java.awt.Dimension(110, 25));
+		boutonExercicePrec1.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				try {
+					boutonExercicePrec1(evt);
+					System.out.println("ONRDTFG");
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 
+
+		});
+		
+		
 		boutonIndice.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 		boutonIndice.setText("Indices");
 		boutonIndice.setMaximumSize(new java.awt.Dimension(110, 25));
@@ -107,14 +124,14 @@ public class InterfaceEtudiant extends java.awt.Frame {
 		fenetreIndice.setEditable(false);
 		fenetreIndice.setBackground(new java.awt.Color(249, 249, 249));
 		fenetreIndice.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
-		fenetreIndice.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+		//fenetreIndice.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 		fenetreIndice.setText("Affichage des indices ");
 		fenetreIndice.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-		fenetreIndice.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				fenetreIndiceActionPerformed(evt);
-			}
-		});
+		//fenetreIndice.addActionListener(new java.awt.event.ActionListener() {
+		//	public void actionPerformed(java.awt.event.ActionEvent evt) {
+		//		fenetreIndiceActionPerformed(evt);
+		//	}
+		//});
 
 		boutonTable.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
 		boutonTable.setText("Afficher les tables");
@@ -131,8 +148,13 @@ public class InterfaceEtudiant extends java.awt.Frame {
 		boutonValider.setText("Valider la réponse");
 		boutonValider.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				try {
 				boutonValiderActionPerformed(evt);
+			}catch(IndexOutOfBoundsException i) {
+				System.out.println("Erreur la ou tu sais");
 			}
+			}
+				
 		});
 
 		javax.swing.GroupLayout panneauLayout = new javax.swing.GroupLayout(panneau);
@@ -194,9 +216,17 @@ public class InterfaceEtudiant extends java.awt.Frame {
 		System.exit(0);
 	}//GEN-LAST:event_exitForm
 
+	
+	private void boutonExercicePrec1(ActionEvent evt) throws SQLException {
+		// TODO Auto-generated method stub
+		String contexte = Test.bdd.info();
+		JOptionPane jop1 = new JOptionPane();
+		jop1.showMessageDialog(null, contexte, "Information", JOptionPane.INFORMATION_MESSAGE);
+		
+	}
 	private void boutonExerciceSuivantActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonExerciceSuivantActionPerformed
 		// TODO add your handling code here:
-		if(Test.exercice.numQuestion>=Test.exercice.exercice.size()) {
+		if(Test.exercice.numQuestion+1>=Test.exercice.exercice.size()) {
 			ecrireErreur("Fin de l'exercice");
 			/*
 			 * 
@@ -209,6 +239,9 @@ public class InterfaceEtudiant extends java.awt.Frame {
 			 * 
 			 */
 			try {
+				System.out.println("FIN");
+				JOptionPane jop1 = new JOptionPane();
+				jop1.showMessageDialog(null, "Exercice terminé.\nUn fichier résultat à été généré.", "Information", JOptionPane.INFORMATION_MESSAGE);
 				Test.xmlFin();
 			} catch (TransformerConfigurationException e) {
 				// TODO Auto-generated catch block
@@ -239,26 +272,33 @@ public class InterfaceEtudiant extends java.awt.Frame {
 
 	public void ecrireErreur(String erreur) {
 		fenetreIndice.setForeground(new Color(155, 20, 20));
-		fenetreIndice.setText(erreur);
+		fenetreIndice.setText("test \r\n test");
 	}
 	public void correct() {
 		fenetreIndice.setForeground(new Color(20, 200, 20));
 		fenetreIndice.setText("Réponse correct !");
+		Test.nbEssais=0;
 	}
 	private void boutonValiderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonValiderActionPerformed
 		// TODO add your handling code here:
+		Test.xmlProposition(editeurTexte.getText());
+		Test.nbEssais++;
 		try {
 			if(Test.analyseR.compareReponse(editeurTexte.getText(),Test.exercice.exercice.get(Test.exercice.numQuestion).reponse )) {
 				correct();
 			}
 		}catch(java.lang.NullPointerException e){
-			System.out.println("Une erreur est survenue");
+			System.out.println(" < bouton valider  >Une erreur est survenue NULL POINTER EXECEPTION");
 		}finally {
 		
-			System.out.println("Une erreur est survenue...");
+			System.out.println("  < bouton valider  > Une erreur est survenue...");
 		}
 	}//GEN-LAST:event_boutonValiderActionPerformed
 
+	public void afficheContexte(String contexte) {
+		JOptionPane jop1 = new JOptionPane();
+		jop1.showMessageDialog(null, contexte, "Information", JOptionPane.INFORMATION_MESSAGE);
+	}
 	/**
 	 * @param args the command line arguments
 	 */
@@ -305,7 +345,7 @@ public class InterfaceEtudiant extends java.awt.Frame {
 	private javax.swing.JButton boutonValider;
 	private javax.swing.JEditorPane editeurTexte;
 	private javax.swing.JTextField ennonceExercice;
-	private javax.swing.JTextField fenetreIndice;
+	private javax.swing.JTextArea fenetreIndice;
 	private javax.swing.JScrollPane jScrollPane1;
 	private javax.swing.JPanel panneau;
 	// End of variables declaration//GEN-END:variables
