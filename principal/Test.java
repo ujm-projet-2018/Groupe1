@@ -1,6 +1,7 @@
 package projetTutore;
 
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.DatabaseMetaData;
@@ -15,78 +16,100 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.swing.JFrame;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 public class Test {
 	public static InterfaceEtudiant ie ;
 	public static GestionBDD bdd;
-
-
-
-	public static void main(String[] args) throws SQLException, InterruptedException, ScriptException {
+	public static AnalyseReponse analyseR;
+	public static Exercice exercice;
+	public static DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+	public static DocumentBuilder docBuilder ;
+	public static Document doc;
+	public static Element racine;
+	
+	public static void xmlQuestionSuivante() {
+		Element contact = doc.createElement("Question");
+        racine.appendChild(contact);
+ 
+        // attributs de l'élément contact
+        Attr attr = doc.createAttribute("id");
+        attr.setValue(String.valueOf(exercice.numQuestion+1));
+        contact.setAttributeNode(attr);
+	}
+	
+	public static void xmlFin() throws TransformerConfigurationException {
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        DOMSource source = new DOMSource(doc);
+        StreamResult resultat = new StreamResult(new File("resultat.xml"));
+ 
+        try {
+			transformer.transform(source, resultat);
+		} catch (TransformerException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+	
+	public static void main(String[] args) throws SQLException, InterruptedException, ScriptException, TransformerConfigurationException, ParserConfigurationException {
 		// TODO Auto-generated method stub
+		exercice = new Exercice("Test");
+		Question q1 = new Question("Donnez le nom des animaux", "SELECT nom FROM animal");
+		exercice.ajouterQuestion(q1);
+		Question q2 = new Question("Donnez le nom, la date de naissance et le sexe des animaux", "SELECT nom,date_naissance,sexe FROM animal");
+		exercice.ajouterQuestion(q2);
+		
+		
+		
+		
+		docBuilder = dbFactory.newDocumentBuilder();
+		doc = docBuilder.newDocument();
+		racine = doc.createElement("Exercice");
+		doc.appendChild(racine);
+		
+        Element contact = doc.createElement("Question");
+        racine.appendChild(contact);
+ 
+        // attributs de l'élément contact
+        Attr attr = doc.createAttribute("id");
+        attr.setValue(String.valueOf(exercice.numQuestion+1));
+        contact.setAttributeNode(attr);
+        
+        
+
+		
+		
+		
+		///////////////////////////////////////
+
 		ie = new InterfaceEtudiant();
 		ie.setVisible(true);
 		bdd = new GestionBDD();
-		AnalyseReponse analyseR = new AnalyseReponse();
-		//analyseR.compareReponse("SELECT g", "SELECT gr");
-		/*
-		Arbre a = new Arbre();
-		Arbre droit = new Arbre("fils droit", null, null);
-		Arbre gauche = new Arbre("fils gauche", null, null);
-		a.setDroite(droit);
-		a.setGauche(gauche);
-		a.setElement("test");
-		System.out.println(a.toString());
-		 */
-
-
-		//Arbre test4 = analyseR.decomposeArbre("");
-		//System.out.println(analyseR.agregat("SELECT AVG     (televe, jena"));
-		//analyseR.analyseFrom("t_eleve , t,prof");
-		boolean b = analyseR.opComparaison("SELECT nom_colonnes FROM nom_table WHERE condition1 A ND (condition2 O R condition3)");
-		System.out.println(b);
-		//analyseR.analyseAgregat("");
-
-
-		Pattern pattern;
-		Matcher matcher;
-		String requete = "ele<15 AND eleve.ter = 52 AND elve_y.nom=prof.nom AND ele.ef=fg.gt";
-		//pattern = Pattern.compile("((.+)[.](.+)[ ]*=[ ]*(.+¨ )[.](.+))");
-		pattern = Pattern.compile("([a-zA-Z0-9_-]+)[.]([a-zA-Z0-9_-]+)=([a-zA-Z0-9_-]+)[.]([a-zA-Z0-9_-]+)");
-		matcher = pattern.matcher(requete);
-		if(matcher.find()) {
-			String g1=matcher.group(1);
-			String g2=matcher.group(2);
-			String g3=matcher.group(3);
-			String g4=matcher.group(4);
-			String test = matcher.group();
-			System.out.println(requete);
-			requete = requete.replace(test, "");
-			System.out.println(requete);
-		}
-
-
-		analyseR.analyseWhere("", new Arbre());
-
-		Exercice exercice = new Exercice("test");
-		exercice.getTitre();
-		Question actuelle;
-
-		//System.out.println(test4.toString());
-	//	System.out.println("");
-//		System.out.println(analyseR.arbre2array(test4).toString());
-
-		String alpha = "[COUNT( ROTIE )]";
-		String beta = "[COUNT(ROTIE)]";
-		alpha = alpha.replaceAll("[|]| ", "");
-		beta = beta.replaceAll("[|]| ", "");
-		System.out.println(alpha.contentEquals(beta));
-		System.out.println(alpha+"   "+beta);
+	    analyseR = new AnalyseReponse();
+	    
+		String enonce = Test.exercice.exercice.get(Test.exercice.numQuestion).enonce;
+		ie.ecrireEnonce(enonce);
 		
 		try {
-			boolean essai = analyseR.compareReponse("SELECT eleve FROM prof WHERE 1<id AND hid.fr=qr.seg ", "SELECT eleve FROM PROF WHERE id.vf=fv.se");
-		System.out.println(essai);
+		//boolean essai = analyseR.compareReponse("SELECT eleve,prof,classe FROM prof  ", "SELECT eleve FROM eleve");
+		//System.out.println(essai);
 		}catch(java.lang.IndexOutOfBoundsException e) {
 			System.out.println("Une erreur s'est produite...");
 			/*
@@ -94,8 +117,6 @@ public class Test {
 			 * erreur IndexOutOfBound
 			 */
 		}
-		
-		//System.out.println(essai);
 	}
 
 }
