@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE exercice SYSTEM "">
+
+<exercice>
+    <preambule> Préambule blablabla </preambule>
+    <question>
+        <enonce> e1 </enonce>
+        <reponse> r1 </reponse>
+    </question>
+    <question>
+        <enonce> e2 </enonce>
+        <reponse> r2 </reponse>
+    </question>
+    <question>
+        <enonce> e3 </enonce>
+        <reponse> r3 </reponse>
+    </question>
+</exercice>

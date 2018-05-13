@@ -9,6 +9,11 @@ import exercice.Exercice;
 import exercice.Question;
 import java.io.File;
 import javax.swing.JFileChooser;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  *
@@ -399,7 +404,7 @@ public class creationFrame extends javax.swing.JFrame {
 
         /*recuperation du nom si précisé*/
         String nFic = tNomFichier.getText();
-        
+
         if (!nFic.equalsIgnoreCase("") && !nFic.equalsIgnoreCase("Nom du fichier à créer (sans extension)")) {
             /*serailisation*/
             System.err.println("exportation...");
@@ -491,7 +496,8 @@ public class creationFrame extends javax.swing.JFrame {
         if (file != null) {
             String path = file.getAbsolutePath();
             
-            /*importation*/
+            /*importation ser*/
+ /*
             System.err.println("importation...");
             Exercice e = exo.importation(path);
             System.out.println(e);
@@ -499,6 +505,105 @@ public class creationFrame extends javax.swing.JFrame {
             tPreambule.setText(exo.getPreambule());
             tQuestion.setText(exo.getQuestions().get(0).getEnonce());
             tReponse.setText(exo.getQuestions().get(0).getReponse());    
+             */
+ /*importation xml*/
+            try {
+                //Obtenir la configuration du sax parser
+                SAXParserFactory spfactory = SAXParserFactory.newInstance();
+                //Obtenir une instance de l'objet parser
+                SAXParser saxParser = spfactory.newSAXParser();
+
+                DefaultHandler handler = new DefaultHandler() {
+                    boolean bpreambule, bquestion, benonce, breponse;
+                    Exercice newE = new Exercice();
+                    int nbq = 0;
+                    
+                    public void startElement(String uri, String localName,
+                        String qName, Attributes attributes) throws SAXException {
+                        
+                        if (qName.equalsIgnoreCase("preambule")) {
+                            bpreambule = true;
+                        }
+                        
+                        if (qName.equalsIgnoreCase("question")) {
+                            bquestion = true;
+                        }
+
+                        if (qName.equalsIgnoreCase("enonce")) {
+                            benonce = true;
+                        }
+
+                        if (qName.equalsIgnoreCase("reponse")) {
+                            breponse = true;
+                        }
+                    }
+
+                    public void endElement(String uri, String localName,
+                        String qName) throws SAXException {
+
+                        if (qName.equalsIgnoreCase("preambule")) {
+                            bpreambule = false;
+                            exo = newE;
+                        }
+
+                        if (qName.equalsIgnoreCase("question")) {
+                            bquestion = false;
+                        }
+
+                        if (qName.equalsIgnoreCase("enonce")) {
+                            benonce = false;
+                        }
+
+                        if (qName.equalsIgnoreCase("reponse")) {
+                            breponse = false;
+                        }
+                    }
+
+                    public void characters(char ch[], int start,
+                        int length) throws SAXException {
+
+                        if (bpreambule) {
+                            System.out.println("preambule : "
+                                + new String(ch, start, length));
+                            newE.setPreambule(new String(ch, start, length));
+                            bpreambule = false;
+                        }
+
+                        if (bquestion) {
+                            System.out.println("question : "
+                                + new String(ch, start, length));
+                            newE.ajouterQuestion(new Question());
+                            bquestion = false;
+                        }
+
+                        if (benonce) {
+                            System.out.println("enonce : "
+                                + new String(ch, start, length));
+                            newE.getQuestions().get(nbq).setEnonce(new String(ch, start, length));
+                            benonce = false;
+                        }
+                        
+                        if (breponse) {
+                            System.out.println("reponse: "
+                                + new String(ch, start, length));
+                            newE.getQuestions().get(nbq).setReponse(new String(ch, start, length));
+                            breponse = false;
+                            nbq++;
+                        }
+                    }
+
+                };
+                
+                saxParser.parse(path, handler);
+                
+                tPreambule.setText(exo.getPreambule());
+                tQuestion.setText(exo.getQuestions().get(0).getEnonce());
+                tReponse.setText(exo.getQuestions().get(0).getReponse());
+                lNbQuestions.setText("1");
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }//GEN-LAST:event_bChargerMouseClicked
 
@@ -540,16 +645,15 @@ public class creationFrame extends javax.swing.JFrame {
         //</editor-fold>
 
         /* création et affichage de la fenêtre */
-        /*java.awt.EventQueue.invokeLater(new Runnable() {
+ /*java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new creationFrame().setVisible(true);
 
             }
         });
-*/
-        
+         */
         creationFrame f = new creationFrame();
-        
+
     }
 
     /**
