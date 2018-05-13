@@ -11,12 +11,12 @@ public class GestionBDD implements General {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
-			// TODO Bloc catch généré automatiquement
+			// TODO Bloc catch gÃ©nÃ©rÃ© automatiquement
 			e.printStackTrace();
 		}
 		//connexion
 		//String url = "jdbc:mysql://mira2.univ-st-etienne.fr/ba02996q";
-		String url = "jdbc:mysql://localhost/projet";
+		String url = "jdbc:mysql://localhost/projettut";
 		String identifiant = General.identifiant;
 		String mdp = General.mdp;
 		c =DriverManager.getConnection(url,identifiant,mdp);
@@ -31,20 +31,41 @@ public class GestionBDD implements General {
 	 * @param type m si sa modifie la base s sinon 
 	 * @throws SQLException
 	 */
-	public ResultSet reqSQL(String query, char type) throws SQLException{
+	public ResultSet reqSQL(String query, char type) {
 		//c.setAutoCommit(false);
-		st=c.createStatement();
+		try {
+			st=c.createStatement();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		System.out.println("Requete : "+query);
 		switch(type){
 		case('s'):
-			rs = st.executeQuery(query);
-		afficherRes(rs);
+			try {
+				rs = st.executeQuery(query);
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			try {
+				afficherRes(rs);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		return rs;
 		
 		case('m'):
-			int res = st.executeUpdate(query);
-		System.out.println(res + " tuple(s) affecté(s)\n");
+			int res = -1;
+			try {
+				res = st.executeUpdate(query);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		System.out.println(res + " tuple(s) affecté©(s)\n");
 		return rs;
 		
 		default:
@@ -97,20 +118,55 @@ public class GestionBDD implements General {
 		ResultSet resultSet = c.getMetaData().getCatalogs();
 		ResultSet resultSet2;
 
+		System.out.println("Titre : "+Test.exercice.titre);
+		System.out.println("Préambule : \n" + Test.exercice.preambule);
 
 		// --- LISTING DATABASE TABLE NAMES ---
 		String[] types = { "TABLE" };
 		resultSet = c.getMetaData().getTables("projettut", null, "%", types);
 		String tableName = "";
+		
 		while (resultSet.next()) {
 			tableName = resultSet.getString(3);
-			System.out.println("Table Name = " + tableName);
+			System.out.println("Nom de la table : " + tableName);
 			DatabaseMetaData meta = c.getMetaData();
 			resultSet2 = meta.getColumns("projettut", null, tableName, "%");
 			while (resultSet2.next()) {
-				System.out.println("Column Name of table " + tableName + " = "+ resultSet2.getString(4));
+				System.out.println("   Colonne de la table " + tableName + " = "+ resultSet2.getString(4));
 			}
 		}
 	}
+	
+	public String info() throws SQLException{
+		
+		String retour = "";
+		ResultSet resultSet = c.getMetaData().getCatalogs();
+		ResultSet resultSet2;
+
+		retour=retour+"Titre : "+Test.exercice.titre+"\n";
+		System.out.println("Titre : "+Test.exercice.titre);
+		retour=retour+"Préambule : \n" + Test.exercice.preambule+"\n";
+		System.out.println("Préambule : \n" + Test.exercice.preambule);
+
+		// --- LISTING DATABASE TABLE NAMES ---
+		String[] types = { "TABLE" };
+		resultSet = c.getMetaData().getTables("projettut", null, "%", types);
+		String tableName = "";
+		
+		while (resultSet.next()) {
+			tableName = resultSet.getString(3);
+			retour=retour+"Nom de la table : " + tableName;
+			System.out.println("Nom de la table : " + tableName);
+			DatabaseMetaData meta = c.getMetaData();
+			resultSet2 = meta.getColumns("projettut", null, tableName, "%");
+			while (resultSet2.next()) {
+				retour=retour+"   Colonne de la table " + tableName + " = "+ resultSet2.getString(4)+"\n";
+				System.out.println("   Colonne de la table " + tableName + " = "+ resultSet2.getString(4));
+			}
+		}
+		return retour;
+	}
+	
+	
 
 }
