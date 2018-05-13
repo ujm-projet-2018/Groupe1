@@ -58,6 +58,10 @@ public class creationFrame extends javax.swing.JFrame {
         bQSuivante = new javax.swing.JButton();
         bQPrecedente = new javax.swing.JButton();
         bSupprQ = new javax.swing.JButton();
+        lFichier = new javax.swing.JLabel();
+        tNomFichier = new javax.swing.JTextField();
+        bCharger = new javax.swing.JButton();
+        lOu = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Création d'exercice");
@@ -180,6 +184,37 @@ public class creationFrame extends javax.swing.JFrame {
             }
         });
 
+        lFichier.setFont(new java.awt.Font("Ubuntu", 0, 18)); // NOI18N
+        lFichier.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lFichier.setText("Fichier :");
+        lFichier.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        lFichier.setName("lPreambule"); // NOI18N
+
+        tNomFichier.setFont(new java.awt.Font("Ubuntu", 0, 18)); // NOI18N
+        tNomFichier.setText("Nom du fichier à créer (sans extension)");
+        tNomFichier.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                tNomFichierFocusGained(evt);
+            }
+        });
+        tNomFichier.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tNomFichierMouseClicked(evt);
+            }
+        });
+
+        bCharger.setFont(new java.awt.Font("Ubuntu", 0, 18)); // NOI18N
+        bCharger.setText("Charger un fichier");
+        bCharger.setActionCommand("Charger");
+        bCharger.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                bChargerMouseClicked(evt);
+            }
+        });
+
+        lOu.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lOu.setText("OU");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -202,16 +237,26 @@ public class creationFrame extends javax.swing.JFrame {
                                     .addComponent(bQSuivante, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(bQPrecedente, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)))
                             .addComponent(bAjouterQuestion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(bValider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(lQuestions, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 874, Short.MAX_VALUE)
-                        .addComponent(lPreambule, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(lFichierSQL, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                            .addComponent(tCheminFichierSQL, javax.swing.GroupLayout.PREFERRED_SIZE, 689, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(bRecherche, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(bValider, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)))
+                    .addComponent(lFichier, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(lQuestions, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 874, Short.MAX_VALUE)
+                                .addComponent(lPreambule, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(lFichierSQL, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                    .addComponent(tCheminFichierSQL, javax.swing.GroupLayout.PREFERRED_SIZE, 689, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(bRecherche, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addGap(0, 0, Short.MAX_VALUE))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(tNomFichier, javax.swing.GroupLayout.PREFERRED_SIZE, 507, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(lOu, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(bCharger, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -220,7 +265,14 @@ public class creationFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(lPreambule, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lFichier, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tNomFichier, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bCharger, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lOu, javax.swing.GroupLayout.DEFAULT_SIZE, 53, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lFichierSQL, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -233,8 +285,8 @@ public class creationFrame extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(bQSuivante, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
-                            .addComponent(lNbQuestions, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(bQSuivante, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lNbQuestions, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -302,7 +354,7 @@ public class creationFrame extends javax.swing.JFrame {
         String enonce = tQuestion.getText();
         String reponse = tReponse.getText();
         if ((numQ - 1) == nbQ) { // ajout de question
-            if ((!q.equalsIgnoreCase("")) && (!r.equalsIgnoreCase(""))) {
+            if (/*chaines non vide*/(!q.equalsIgnoreCase("")) && (!r.equalsIgnoreCase(""))) {
                 Question question = new Question(enonce, reponse);
                 exo.ajouterQuestion(question);
                 nbQ = exo.getNbQuestions();
@@ -310,6 +362,8 @@ public class creationFrame extends javax.swing.JFrame {
                 // System.err.println("etat 1");
                 tQuestion.setText("");
                 tReponse.setText("");
+            } else {
+                System.err.println("Un des champs énoncé ou réponse est vide.");
             }
         } else { // modif de question
             if ((!q.equalsIgnoreCase("")) && (!r.equalsIgnoreCase(""))) {
@@ -343,14 +397,16 @@ public class creationFrame extends javax.swing.JFrame {
         System.err.println("");
         System.err.println(exo);
 
-        /*serailisation*/
-        System.err.println("exportation...");
-        exo.exportation("exercice.ser");
+        /*recuperation du nom si précisé*/
+        String nFic = tNomFichier.getText();
         
-        /*test lecture fichier serialisé*/
-        System.err.println("importation...");
-        Exercice e = creationFrame.getExo().importation("exercice.ser");
-        System.out.println(e);
+        if (!nFic.equalsIgnoreCase("") && !nFic.equalsIgnoreCase("Nom du fichier à créer (sans extension)")) {
+            /*serailisation*/
+            System.err.println("exportation...");
+            exo.exportation(nFic + ".ser");
+        } else {
+            System.err.println("Nom du fichier incorrect.");
+        }
     }//GEN-LAST:event_bValiderMouseClicked
 
     /**
@@ -423,6 +479,34 @@ public class creationFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_bSupprQMouseClicked
 
+    private void tNomFichierFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tNomFichierFocusGained
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tNomFichierFocusGained
+
+    private void bChargerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bChargerMouseClicked
+        // TODO add your handling code here:
+        final JFileChooser fc = new JFileChooser();
+        fc.showOpenDialog(this);
+        File file = fc.getSelectedFile();
+        if (file != null) {
+            String path = file.getAbsolutePath();
+            
+            /*importation*/
+            System.err.println("importation...");
+            Exercice e = exo.importation(path);
+            System.out.println(e);
+            exo = e;
+            tPreambule.setText(exo.getPreambule());
+            tQuestion.setText(exo.getQuestions().get(0).getEnonce());
+            tReponse.setText(exo.getQuestions().get(0).getReponse());    
+        }
+    }//GEN-LAST:event_bChargerMouseClicked
+
+    private void tNomFichierMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tNomFichierMouseClicked
+        // TODO add your handling code here:
+        tNomFichier.setText("");
+    }//GEN-LAST:event_tNomFichierMouseClicked
+
     /**
      * ############################################## # # # LANCEMENT DE
      * L'APPLICATION # # # ##############################################
@@ -473,6 +557,7 @@ public class creationFrame extends javax.swing.JFrame {
      */
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bAjouterQuestion;
+    private javax.swing.JButton bCharger;
     private javax.swing.JButton bQPrecedente;
     private javax.swing.JButton bQSuivante;
     private javax.swing.JButton bRecherche;
@@ -481,11 +566,14 @@ public class creationFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JLabel lFichier;
     private javax.swing.JLabel lFichierSQL;
     private javax.swing.JLabel lNbQuestions;
+    private javax.swing.JLabel lOu;
     private javax.swing.JLabel lPreambule;
     private javax.swing.JLabel lQuestions;
     private javax.swing.JTextField tCheminFichierSQL;
+    private javax.swing.JTextField tNomFichier;
     private javax.swing.JTextArea tPreambule;
     private javax.swing.JTextArea tQuestion;
     private javax.swing.JTextArea tReponse;
