@@ -272,11 +272,11 @@ public class InterfaceEtudiant extends java.awt.Frame {
 
 	public void ecrireErreur(String erreur) {
 		fenetreIndice.setForeground(new Color(155, 20, 20));
-		fenetreIndice.setText("test \r\n test");
+		fenetreIndice.setText("\t    Erreur\n\n\n\n\t"+erreur);
 	}
 	public void correct() {
 		fenetreIndice.setForeground(new Color(20, 200, 20));
-		fenetreIndice.setText("Réponse correct !");
+		fenetreIndice.setText("\n\n\n\n\n\n\n\n\tRéponse correct !");
 		Test.nbEssais=0;
 	}
 	private void boutonValiderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonValiderActionPerformed
