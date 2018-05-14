@@ -16,6 +16,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
@@ -290,11 +292,21 @@ public class InterfaceEtudiant extends java.awt.Frame {
 			ObjectInputStream ois = new ObjectInputStream (new FileInputStream (choix));
 			Test.exercice = (Exercice) ois.readObject();
 			ois.close();
-			
+			Test.exercice.titre=choix.getName();
 			System.out.println ("Exercice importé");
 			
 			String testt = Test.exercice.preambule;
 			System.out.println(testt);
+			System.out.println(Test.exercice.initialisation);
+			String query = Test.exercice.initialisation;
+			ArrayList<String> arrayQuery = new ArrayList<>();
+			query.replaceAll("\n|\r", "");
+			ArrayList<String> list = new ArrayList<String>(Arrays.asList(query.split(";")));
+			
+			System.out.println(Test.exercice.initialisation);
+			for(int i=0;i<list.size();i++) {
+				Test.bdd.reqSQL(list.get(i), 'm');
+			}
 
 		}
 		catch (ClassNotFoundException exception)
@@ -326,7 +338,7 @@ public class InterfaceEtudiant extends java.awt.Frame {
 
 	public void ecrireErreur(String erreur) {
 		fenetreIndice.setForeground(new Color(155, 20, 20));
-		fenetreIndice.setText("\t    Erreur\n\n\n\n\t"+erreur);
+		fenetreIndice.setText("\n\n\n\n\n\n\n\n\n\n"+erreur);
 	}
 	public void correct() {
 		fenetreIndice.setForeground(new Color(20, 200, 20));

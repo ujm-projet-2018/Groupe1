@@ -1,6 +1,8 @@
 package projetTutore;
 
 
+import java.awt.List;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -8,7 +10,11 @@ package projetTutore;
  */
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.Attributes;
@@ -116,7 +122,12 @@ public class creationFrame extends javax.swing.JFrame {
         bRecherche.setText("Rechercher");
         bRecherche.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                bRechercheMouseClicked(evt);
+                try {
+					bRechercheMouseClicked(evt);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         });
 
@@ -329,18 +340,37 @@ public class creationFrame extends javax.swing.JFrame {
 
     private void tCheminFichierSQLFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tCheminFichierSQLFocusGained
         tCheminFichierSQL.selectAll();
+        
     }//GEN-LAST:event_tCheminFichierSQLFocusGained
 
-    private void bRechercheMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bRechercheMouseClicked
+    private void bRechercheMouseClicked(java.awt.event.MouseEvent evt) throws IOException {//GEN-FIRST:event_bRechercheMouseClicked
         final JFileChooser fc = new JFileChooser();
         fc.showOpenDialog(this);
+        String path;
         File file = fc.getSelectedFile();
         if (file != null) {
-            String path = file.getAbsolutePath();
+            path = file.getAbsolutePath();
             tCheminFichierSQL.setText(path);
         }
+        java.util.List<String> s;
+        s=Files.readAllLines(file.toPath());
+        System.out.println(s);
+		JOptionPane jop1 = new JOptionPane();
+		jop1.showMessageDialog(null, "", "Information", JOptionPane.INFORMATION_MESSAGE);
+		String s2="";
+		for(int i=0;i<s.size();i++) {
+			s2=s2+s.get(i);
+		}
+		System.out.println(s2);
+		exo.initialisation=s2;
+		
+		
+		
+		
     }//GEN-LAST:event_bRechercheMouseClicked
 
+    
+    
     private void tQuestionFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tQuestionFocusGained
         tQuestion.selectAll();
     }//GEN-LAST:event_tQuestionFocusGained

@@ -137,6 +137,29 @@ public class GestionBDD implements General {
 		}
 	}
 	
+	
+	/**
+	 * coupe la chaine toute
+	 * @param lines
+	 * @return
+	 */
+	public static String formatString(String lines) {
+	    final int NB_MAX = 75;
+	    StringBuilder maChaine = new StringBuilder(lines);
+	    int index = 0;
+	 
+	    do {
+	      index = maChaine.indexOf(" ", index + NB_MAX);
+	      if (index < 0) {
+	        break;
+	      }
+	      maChaine.setCharAt(index, '\n');
+	    }
+	    while (true);
+	    return maChaine.toString();
+	 
+	  }
+	
 	public String info() throws SQLException{
 		
 		String retour = "";
@@ -145,7 +168,8 @@ public class GestionBDD implements General {
 
 		retour=retour+"Titre : "+Test.exercice.titre+"\n";
 		System.out.println("Titre : "+Test.exercice.titre);
-		retour=retour+"Préambule : \n" + Test.exercice.preambule+"\n";
+		String p = formatString(Test.exercice.preambule);
+		retour=retour+"Préambule : \n" + p+"\n";
 		System.out.println("Préambule : \n" + Test.exercice.preambule+"\nVoici les différents tables : \n");
 
 		// --- LISTING DATABASE TABLE NAMES ---

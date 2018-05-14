@@ -11,6 +11,9 @@ import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.mysql.jdbc.SQLError;
+import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException;
+
 public class AnalyseReponse extends Arbre{
 
 
@@ -509,12 +512,41 @@ public class AnalyseReponse extends Arbre{
 
 	public boolean compareReponse(String requeteEleve, String requeteProf) {
 
-		boolean resultatIdentique=true;;
+	
+		ResultSet rs1 = null,rs2 =null;
+		/*
+		 * ICI on va tester si MySQL "accepte" la reque
+		 * c'est a dire si la requete est correcte d'un point de vue syntaxique 
+		 * et si les attributs et les noms des champs existent...
+		 * Sinon on sort et on explicite l'erreur
+		 * 
+		 */
+		
+		try {
+			rs1 = Test.bdd.st.executeQuery(requeteEleve);
+			Test.bdd.afficherRes(rs1);
+		} catch (SQLException sqle) {
+			System.out.println(rs1);
+		      String message = sqle.getMessage(); 
+		      String sqlState = sqle.getSQLState(); 
+		      int errorCode = sqle.getErrorCode(); 
+		      System.out.println("Message = "+message); 
+		      System.out.println("SQLState = "+sqlState); 
+		      System.out.println("ErrorCode = "+errorCode); 
+			System.out.println(" (CompareReponse) La requete est incorrect !");
+			Test.ie.ecrireErreur("Erreur syntaxique, vérifier votre requête...\n>>>"+message+"\n");
+			
+			return false;
+		}
+		
+		System.out.println(rs1);
+		System.out.println(rs2);
 		/*
 		 * 
 		 * comparaison des resultats
 		 * 
 		 */
+		boolean resultatIdentique=true;
 		System.out.println("La requete du prof est :: "+requeteProf+" et celle de l'eleve est "+requeteEleve);
 		Arbre arbreProf = decomposeArbre(requeteProf);
 		Arbre arbreEleve = decomposeArbre(requeteEleve);
@@ -639,55 +671,46 @@ public class AnalyseReponse extends Arbre{
 				break;
 				
 			case(SQL.WHERE):
+				if(!arrayEleve.get(curseurEleve).equals(SQL.WHERE)) {
+					//teste l'equivalence
+				//	if(equivalent(requeteEleve,requeteProf))
+					Test.ie.ecrireErreur("Erreur dans le WHERE \n\t il manque le WHERE");
+					return false;
+				}
+				curseurEleve++;
+				curseurProf++;
+				temp1=filtreAgregat(arrayProf.get(curseurProf));
+				temp2=filtreAgregat(arrayEleve.get(curseurEleve));
+				if(!temp1.equals(temp2)) {
+					Test.ie.ecrireErreur("Erreur dans le FROM \n\t table erronne");
+					return false;
+					/*
+					 * 
+					 * on peut comparer la taille pour savoir si il en manque ...
+					 */
+				}
 				/*
-				 * 
-				 * 
-				 * SELECT animal.nom FROM animal,race WHERE race.nom="Berger allemand" AND race_id=race.id;
-				 * 
-				 * SELECT nom,date_naissance,sexe FROM animal
-				 * 
-				 * 
-				 * 14/5 13h30
-				 * 
-				 * Point virgule a la fin des requete ?
-				 * Autre requete a part SELECT ?
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * Select nom from animal
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * Select nom,date_naissance,sexe from animal
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
+				 * ON COMPARe LES TABLES
 				 */
+
+				temp1=filtreAgregat(arrayEleve.get(curseurEleve));
+				temp2=filtreAgregat(arrayProf.get(curseurProf));
+				if(!temp1.equals(temp2)) {
+					Test.ie.ecrireErreur("Erreur FROM \n\t ce ne sont pas les bonnes tables");
+					return false;
+				}
+				curseurEleve++;
+				curseurProf++;
+				break;
+				
 				
 			default:
 				//Test.ie.ecrireErreur("On est dans la place");
 
-				if(resultatIdentique) {
+			/*	if(resultatIdentique) {
 					System.out.println("Resultats identiques");
 					return true;
-				}
+				}*/
 
 			}
 		}
