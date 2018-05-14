@@ -215,7 +215,7 @@ public class AnalyseReponse extends Arbre{
 	public void analyseWhere(String requete, Arbre arbre) {
 
 		//requete=" t_zzzlev.elev=t_prof.prof AND t_en.pro=tgh.tf AND id<2";
-		System.out.println("(where) La requete analysÃ©e est : "+requete);
+		System.out.println("(where) La requete analysée est : "+requete);
 		arbre.ajouter(SQL.WHERE);
 		ArrayList<String> jointure = new ArrayList<>();
 
@@ -388,12 +388,12 @@ public class AnalyseReponse extends Arbre{
 		System.out.println("La requete analysee par moi est "+requete);
 		//requete = "SELECT t-eleve,alpha.t-prof,COUNT(rotie)      \n FROM TABLE,eleve WHERE eleve = 2 AND prof=7 AND prof.nom=eleve.nom";// WHERE eleve = 2
 		requete = filtre(requete);
-		System.out.println("La requete analysÃ©e est : "+requete);
+		System.out.println("La requete analysée est : "+requete);
 
 		pattern = Pattern.compile("SELECT (.+)FROM (.+)");
 		matcher = pattern.matcher(requete);
 		if(matcher.find()) {
-			System.out.println("SELECT dÃ©tecter");
+			System.out.println("SELECT détecter");
 			/**
 			 * La requete commence donc par un SELECT
 			 * On verifie si il existe une fonction d'agregats
@@ -425,7 +425,7 @@ public class AnalyseReponse extends Arbre{
 				//une liste de mot cle type SUM, COUNT ... et une liste d'attibut
 				tabMotCleExiste = true;
 				for(int i=0;i<arrayAttributs.size();i++) {
-					System.out.println(arrayAttributs.get(i)+" est analysÃ©e");
+					System.out.println(arrayAttributs.get(i)+" est analysée");
 					if(distinct(arrayAttributs.get(i)) || agregat(" "+arrayAttributs.get(i))){//on ajoute un espace 
 						System.out.println("c'est un agregats");
 						tabMotCle.add(arrayAttributs.get(i));
@@ -472,7 +472,7 @@ public class AnalyseReponse extends Arbre{
 
 		}else {
 			/**
-			 * La requete n'est pas un SELECT, testons les autres possibilitÃ©
+			 * La requete n'est pas un SELECT, testons les autres possibilité
 			 */
 			pattern = Pattern.compile("INSERT INTO (.+)");
 			matcher = pattern.matcher(requete);
@@ -556,7 +556,7 @@ public class AnalyseReponse extends Arbre{
 			case SQL.AGREGAT:
 				curseurProf++;
 				if(arrayEleve.get(curseurEleve)!=SQL.AGREGAT) {
-					Test.ie.ecrireErreur("Erreur dans le SELECT => il manque des AGRAGATS");
+					Test.ie.ecrireErreur("Erreur dans le SELECT \n il manque des AGRAGATS");
 					return false;
 				}
 				curseurEleve++;
@@ -571,7 +571,7 @@ public class AnalyseReponse extends Arbre{
 				temp1=filtreAgregat(arrayProf.get(curseurProf));
 				temp2=filtreAgregat(arrayEleve.get(curseurEleve));
 				if(!temp1.equals(temp2)) {
-					Test.ie.ecrireErreur("Erreur dans le SELECT ==> agragats incorrect");
+					Test.ie.ecrireErreur("Erreur dans le SELECT \n\t agragats incorrect");
 					return false;
 				}
 				curseurEleve++;
@@ -581,7 +581,7 @@ public class AnalyseReponse extends Arbre{
 			case SQL.ATTRIBUT:
 
 				if(!arrayEleve.get(curseurEleve).equals(SQL.ATTRIBUT)) {
-					Test.ie.ecrireErreur("Erreur dans le SELECT ==> il manque un(des) attribut(s) !");
+					Test.ie.ecrireErreur("Erreur dans le SELECT \n\t il manque un(des) attribut(s) !");
 					return false;
 				}
 				curseurEleve++;
@@ -589,7 +589,7 @@ public class AnalyseReponse extends Arbre{
 				temp1=filtreAgregat(arrayProf.get(curseurProf));
 				temp2=filtreAgregat(arrayEleve.get(curseurEleve));
 				if(!arrayEleve.get(curseurEleve).equals(arrayProf.get(curseurProf))) {
-					Test.ie.ecrireErreur("Erreur dans le SELECT ==> mauvais attributs !");
+					Test.ie.ecrireErreur("Erreur dans le SELECT \n\t mauvais attributs !");
 					return false;
 					/*
 					 * 
@@ -609,7 +609,7 @@ public class AnalyseReponse extends Arbre{
 
 			case SQL.FROM:
 				if(!arrayEleve.get(curseurEleve).equals(SQL.FROM)) {
-					Test.ie.ecrireErreur("Erreur dans le FROM ==> il manque le FROM");
+					Test.ie.ecrireErreur("Erreur dans le FROM \n\t il manque le FROM");
 					return false;
 				}
 				curseurEleve++;
@@ -617,7 +617,7 @@ public class AnalyseReponse extends Arbre{
 				temp1=filtreAgregat(arrayProf.get(curseurProf));
 				temp2=filtreAgregat(arrayEleve.get(curseurEleve));
 				if(!temp1.equals(temp2)) {
-					Test.ie.ecrireErreur("Erreur dans le FROM ==> table erronne");
+					Test.ie.ecrireErreur("Erreur dans le FROM \n\t table erronne");
 					return false;
 					/*
 					 * 
@@ -631,17 +631,61 @@ public class AnalyseReponse extends Arbre{
 				temp1=filtreAgregat(arrayEleve.get(curseurEleve));
 				temp2=filtreAgregat(arrayProf.get(curseurProf));
 				if(!temp1.equals(temp2)) {
-					Test.ie.ecrireErreur("Erreur FROM : ce ne sont pas les bonnes tables");
+					Test.ie.ecrireErreur("Erreur FROM \n\t ce ne sont pas les bonnes tables");
 					return false;
 				}
 				curseurEleve++;
 				curseurProf++;
 				break;
-
+				
+			case(SQL.WHERE):
+				/*
+				 * 
+				 * 
+				 * SELECT animal.nom FROM animal,race WHERE race.nom="Berger allemand" AND race_id=race.id;
+				 * 
+				 * SELECT nom,date_naissance,sexe FROM animal
+				 * 
+				 * 
+				 * 14/5 13h30
+				 * 
+				 * Point virgule a la fin des requete ?
+				 * Autre requete a part SELECT ?
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * Select nom from animal
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * Select nom,date_naissance,sexe from animal
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 */
+				
 			default:
 				//Test.ie.ecrireErreur("On est dans la place");
 
 				if(resultatIdentique) {
+					System.out.println("Resultats identiques");
 					return true;
 				}
 

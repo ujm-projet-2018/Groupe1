@@ -11,7 +11,7 @@ public class GestionBDD implements General {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
-			// TODO Bloc catch gÃ©nÃ©rÃ© automatiquement
+			// TODO Bloc catch généré automatiquement
 			e.printStackTrace();
 		}
 		//connexion
@@ -65,7 +65,7 @@ public class GestionBDD implements General {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		System.out.println(res + " tuple(s) affecté©(s)\n");
+		System.out.println(res + " tuple(s) affect�(s)\n");
 		return rs;
 		
 		default:
@@ -119,7 +119,7 @@ public class GestionBDD implements General {
 		ResultSet resultSet2;
 
 		System.out.println("Titre : "+Test.exercice.titre);
-		System.out.println("Préambule : \n" + Test.exercice.preambule);
+		System.out.println("Pr�ambule : \n" + Test.exercice.preambule);
 
 		// --- LISTING DATABASE TABLE NAMES ---
 		String[] types = { "TABLE" };
@@ -145,8 +145,8 @@ public class GestionBDD implements General {
 
 		retour=retour+"Titre : "+Test.exercice.titre+"\n";
 		System.out.println("Titre : "+Test.exercice.titre);
-		retour=retour+"Préambule : \n" + Test.exercice.preambule+"\n";
-		System.out.println("Préambule : \n" + Test.exercice.preambule);
+		retour=retour+"Pr�ambule : \n" + Test.exercice.preambule+"\n";
+		System.out.println("Pr�ambule : \n" + Test.exercice.preambule+"\nVoici les diff�rents tables : \n");
 
 		// --- LISTING DATABASE TABLE NAMES ---
 		String[] types = { "TABLE" };
@@ -159,10 +159,12 @@ public class GestionBDD implements General {
 			System.out.println("Nom de la table : " + tableName);
 			DatabaseMetaData meta = c.getMetaData();
 			resultSet2 = meta.getColumns("projettut", null, tableName, "%");
+			retour=retour+"\t\n(";
 			while (resultSet2.next()) {
-				retour=retour+"   Colonne de la table " + tableName + " = "+ resultSet2.getString(4)+"\n";
+				retour=retour+resultSet2.getString(4)+",";
 				System.out.println("   Colonne de la table " + tableName + " = "+ resultSet2.getString(4));
 			}
+			retour=retour+")\n";
 		}
 		return retour;
 	}

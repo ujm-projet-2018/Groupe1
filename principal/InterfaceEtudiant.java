@@ -10,10 +10,16 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -22,6 +28,7 @@ import javax.swing.WindowConstants;
 import javax.xml.transform.TransformerConfigurationException;
 
 import jsyntaxpane.DefaultSyntaxKit;
+
 
 
 /*
@@ -74,7 +81,7 @@ public class InterfaceEtudiant extends java.awt.Frame {
 		ennonceExercice.setBackground(new java.awt.Color(249, 249, 249));
 		ennonceExercice.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
 		ennonceExercice.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-		ennonceExercice.setText("Ennonc√© de l'exercice");
+		ennonceExercice.setText("EnnoncÈ de l'exercice");
 		ennonceExercice.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
 		jScrollPane1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
@@ -96,7 +103,7 @@ public class InterfaceEtudiant extends java.awt.Frame {
 		});
 
 		boutonExercicePrec1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-		boutonExercicePrec1.setText("Question pr√©c√©dente");
+		boutonExercicePrec1.setText("Contexte de l'exercice");
 		boutonExercicePrec1.setMaximumSize(new java.awt.Dimension(110, 25));
 		boutonExercicePrec1.setMinimumSize(new java.awt.Dimension(110, 25));
 		boutonExercicePrec1.setPreferredSize(new java.awt.Dimension(110, 25));
@@ -116,10 +123,15 @@ public class InterfaceEtudiant extends java.awt.Frame {
 		
 		
 		boutonIndice.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-		boutonIndice.setText("Indices");
+		boutonIndice.setText("Importer un exercice");
 		boutonIndice.setMaximumSize(new java.awt.Dimension(110, 25));
 		boutonIndice.setMinimumSize(new java.awt.Dimension(110, 25));
 		boutonIndice.setPreferredSize(new java.awt.Dimension(110, 25));
+		boutonIndice.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				boutonIndiceActionPerformed(evt);
+			}
+		});
 
 		fenetreIndice.setEditable(false);
 		fenetreIndice.setBackground(new java.awt.Color(249, 249, 249));
@@ -145,7 +157,7 @@ public class InterfaceEtudiant extends java.awt.Frame {
 		});
 
 		boutonValider.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
-		boutonValider.setText("Valider la r√©ponse");
+		boutonValider.setText("Valider la rÈponse");
 		boutonValider.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				try {
@@ -241,7 +253,7 @@ public class InterfaceEtudiant extends java.awt.Frame {
 			try {
 				System.out.println("FIN");
 				JOptionPane jop1 = new JOptionPane();
-				jop1.showMessageDialog(null, "Exercice termin√©.\nUn fichier r√©sultat √† √©t√© g√©n√©r√©.", "Information", JOptionPane.INFORMATION_MESSAGE);
+				jop1.showMessageDialog(null, "Exercice terminÈ.\nUn fichier rÈsultat ‡ ÈtÈ gÈnÈrÈ.", "Information", JOptionPane.INFORMATION_MESSAGE);
 				Test.xmlFin();
 			} catch (TransformerConfigurationException e) {
 				// TODO Auto-generated catch block
@@ -257,8 +269,50 @@ public class InterfaceEtudiant extends java.awt.Frame {
 		}
 	}//GEN-LAST:event_boutonExerciceSuivantActionPerformed
 
-	private void fenetreIndiceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fenetreIndiceActionPerformed
+	private void boutonIndiceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fenetreIndiceActionPerformed
 		// TODO add your handling code here:
+		
+		File repertoireCourant = null;
+		try {
+			repertoireCourant = new File(".").getCanonicalFile();
+			repertoireCourant= new File(repertoireCourant+"/save");
+			System.out.println("RÈpertoire courant : " + repertoireCourant);
+		} catch(IOException e) {
+			
+		}
+	
+		JFileChooser dialogue = new JFileChooser(repertoireCourant);
+		dialogue.showOpenDialog(null);
+		File choix = dialogue.getSelectedFile();
+		System.out.println("Fichier choisi : " + dialogue.getSelectedFile() +" et donc :"+choix);
+		try
+		{
+			ObjectInputStream ois = new ObjectInputStream (new FileInputStream (choix));
+			Test.exercice = (Exercice) ois.readObject();
+			ois.close();
+			
+			System.out.println ("Exercice importÈ");
+			
+			String testt = Test.exercice.preambule;
+			System.out.println(testt);
+
+		}
+		catch (ClassNotFoundException exception)
+		{
+			
+			System.out.println ("Impossible de lire l'objet : " + exception.getMessage());
+			exception.printStackTrace();
+		}
+		catch (IOException exception)
+		{
+			System.out.println ("Erreur lors de l'ouverture : " + exception.getMessage());
+			
+		}	
+		
+		//Test.exercice = Test.exercice.importation(filename);
+		
+
+		
 	}//GEN-LAST:event_fenetreIndiceActionPerformed
 
 	private void boutonTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonTableActionPerformed
@@ -276,7 +330,7 @@ public class InterfaceEtudiant extends java.awt.Frame {
 	}
 	public void correct() {
 		fenetreIndice.setForeground(new Color(20, 200, 20));
-		fenetreIndice.setText("\n\n\n\n\n\n\n\n\tR√©ponse correct !");
+		fenetreIndice.setText("\n\n\n\n\n\n\n\n\tRÈponse correct !");
 		Test.nbEssais=0;
 	}
 	private void boutonValiderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonValiderActionPerformed

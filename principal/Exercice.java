@@ -19,21 +19,30 @@ public class Exercice implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	
-	public ArrayList<Question> exercice = new ArrayList<Question>();
+	public ArrayList<Question> exercice;
+    public int nbQuestions;
 	public String titre;
 	public String initialisation;
 	public String preambule;
 	public int numQuestion;
 	
 	/**
+     * Constructeur d'un exo ou on demande un titre et une initialisation
+     */
+    public Exercice() {
+        exercice = new ArrayList<Question>();
+    }
+    
+    
+    /**
 	 * Constructeur d'un exo ou on demande un titre et une initialisation
 	 * @param titre
 	 * @param init ==> c'est l'ensemble des requetes SQL pour "creer" l'environnement de travail de l'eleve
 	 */
 	public Exercice(String titre,String init) {
-		this.titre = titre;
+        this();
+        this.titre = titre;
 		this.initialisation = init;
-		this.numQuestion=0;
 	}
 	
 	
@@ -45,10 +54,8 @@ public class Exercice implements Serializable {
 	 * @exemple Pour preambule : "Nous souhaitons traiter une base de donnee des regions des pays..."
 	 */
 	public Exercice(String titre, String init, String preambule) {
-		this.titre = titre;
-		this.initialisation = init;
-		this.preambule = preambule;
-		this.numQuestion=0;
+		this(titre, init);
+        this.preambule = preambule;
 	}
 	
 	/**
@@ -57,26 +64,66 @@ public class Exercice implements Serializable {
 	 * @param titre ===> titre de l'Exercie
 	 */
 	public Exercice(String titre) {
-		this.titre = titre;
+		this();
+        this.titre = titre;
 	}
 	
+    /* Getter & Setter */
+    public ArrayList<Question> getQuestions() {
+        return exercice;
+    }
+    public String getTitre() {
+        return titre;
+    }
+    public void setTitre(String t) {
+        titre = t;
+    }
+    public String getInitialisation() {
+        return initialisation;
+    }
+    public void setInitialisation(String init) {
+        initialisation = init;
+    }
+    public String getPreambule() {
+        return preambule;
+    }
+    public void setPreambule(String prea) {
+        preambule = prea;
+    }
+    public int getNbQuestions() {
+        return nbQuestions;
+    }
+    
+    /**
+     * Méthode ajoutant une question à la liste attribut d'un exercices
+     * @param question 
+     */
 	public void ajouterQuestion(Question question) {
-		this.exercice.add(question);
+        nbQuestions++;
+        this.exercice.add(question);
 	}
-	
-	public void setTitre(String titre) {
-		this.titre = titre;
+    
+    /**
+     * Méthode ajoutant une question à la liste attribut d'un exercices
+     * @param question 
+     */
+	public void supprimerQuestion(int indice) {
+        nbQuestions--;
+        this.exercice.remove(indice);
 	}
-	
-	public void setPreambule(String preambule) {
-		this.preambule=preambule;
+    /**
+     * Méthode ajoutant une question à la liste attribut d'un exercices à la position index
+     * @param index
+     * @param question 
+     */
+	public void ajouterQuestion(int index, Question question) {
+		nbQuestions++;
+        this.exercice.add(index, question);
 	}
-	
-	
 	/**
 	 * Methode pour rentrer le fichier source (ensemble de requete SQL) dans la variable this.initialisation
 	 * !!! la methode a l'air efficace : fichier de plus de 1000 ligne charge instantanement
-	 * Effectuer des tests de performances plus pouss� !
+	 * Effectuer des tests de performances plus pouss� !
 	 * @param source ===> fichier SQL
 	 */
 	public void setInit(File source) {
@@ -97,11 +144,7 @@ public class Exercice implements Serializable {
 	     }
 		
 	}
-	
-	public String getTitre() {
-		return this.titre;
-	}
-	
+    
 	/**
 	 * Methode d'export de l'exo, pour pouvoir etre distribue aux eleves
 	 * @param nom ===> nom de l'export
@@ -131,51 +174,30 @@ public class Exercice implements Serializable {
 	      return result;	
 	}
 	
-	/**
-	 * 
-	 * @return true sil'exo est fini
-	 */
-	public boolean finExo() {
-		if(this.numQuestion==this.exercice.size()) {
-			return true;
-		}else {
-			return false;
-		}
-	}
-	
-	
-	/**
-	 * Attention a d'abord appeler fin exo !
-	 * @return la question suivante de l'exo
-	 */
-	public Question questionSuivante() {
-		this.numQuestion++;
-		return this.exercice.get(this.numQuestion);
-	}
-	
-	/**
-	 * Attention a ne pas appeler cette methode a la premiere question
-	 * @return la question precedente
-	 */
-	public Question questionPrecedente() {
-		this.numQuestion--;
-		return this.exercice.get(numQuestion);
-	}
-	
-	
 	public String toString() {
 		int tailleExo = this.exercice.size();
-		String chaine = "Titre de l'exercice : "+this.titre+"\n";
-		chaine = chaine + this.preambule+"\n";
+		String chaine = ">>> Péambule : \n\n" + this.preambule + "\n";
 		//chaine = chaine + this.initialisation+"\n";
-		for(int i=0;i<tailleExo;i++) {
-			chaine = chaine+"\n>>>Question "+i+" :\n";
-			chaine = chaine+">>>"+this.exercice.get(i).toString();
+		for(int i = 0; i < tailleExo; i++) {
+			chaine = chaine+"\n>>> Question n°" + (i + 1) + " :\n";
+			chaine = chaine+this.exercice.get(i).toString();
 		}
 		return chaine;
 	}
-	
-	
-	
-	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

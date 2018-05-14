@@ -9,6 +9,10 @@ public class Question implements Serializable{
 	private static final long serialVersionUID = 1L;
 	public String enonce;
 	public String reponse;
+	
+	public Question() {
+		
+	}
 	/**
 	 * Constructeur de Question, une Question est une partie d'un Exercice
 	 * @param enonce, il s'agit de l'enonce de la question

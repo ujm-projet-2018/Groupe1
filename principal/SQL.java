@@ -22,4 +22,5 @@ public interface SQL {
 	String DIFF2 = "!=";
 	String FILS_DROIT="DROITE";
 	String FILS_GAUCHE="GAUCHE";
+	
 }
