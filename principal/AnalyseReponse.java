@@ -11,6 +11,8 @@ import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
+
 import com.mysql.jdbc.SQLError;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException;
 
@@ -512,33 +514,40 @@ public class AnalyseReponse extends Arbre{
 
 	public boolean compareReponse(String requeteEleve, String requeteProf) {
 
-	
+
 		ResultSet rs1 = null,rs2 =null;
 		/*
 		 * ICI on va tester si MySQL "accepte" la reque
 		 * c'est a dire si la requete est correcte d'un point de vue syntaxique 
 		 * et si les attributs et les noms des champs existent...
 		 * Sinon on sort et on explicite l'erreur
-		 * 
 		 */
-		
+
 		try {
 			rs1 = Test.bdd.st.executeQuery(requeteEleve);
 			Test.bdd.afficherRes(rs1);
-		} catch (SQLException sqle) {
+		}catch (SQLException sqle) {
 			System.out.println(rs1);
-		      String message = sqle.getMessage(); 
-		      String sqlState = sqle.getSQLState(); 
+			String message = sqle.getMessage(); 
+		   String sqlState = sqle.getSQLState(); 
 		      int errorCode = sqle.getErrorCode(); 
 		      System.out.println("Message = "+message); 
 		      System.out.println("SQLState = "+sqlState); 
 		      System.out.println("ErrorCode = "+errorCode); 
-			System.out.println(" (CompareReponse) La requete est incorrect !");
-			Test.ie.ecrireErreur("Erreur syntaxique, vérifier votre requête...\n>>>"+message+"\n");
-			
+		      if(errorCode==1064) {
+		    	  Test.ie.ecrireErreur("Erreur syntaxique, vérifier votre requête...\n");
+		    	  return false;
+		      }
+
+			System.out.println("Message = "+message); 
+
+			System.out.println(" (CompareReponse) La requete est incorrect !\n"+sqle);
+			Test.ie.ecrireErreur("Erreur SQL, vérifier votre requête...\n>>>"+message+"\n "+errorCode);
+
 			return false;
 		}
-		
+
+
 		System.out.println(rs1);
 		System.out.println(rs2);
 		/*
@@ -620,8 +629,10 @@ public class AnalyseReponse extends Arbre{
 				curseurProf++;
 				temp1=filtreAgregat(arrayProf.get(curseurProf));
 				temp2=filtreAgregat(arrayEleve.get(curseurEleve));
-				if(!arrayEleve.get(curseurEleve).equals(arrayProf.get(curseurProf))) {
+				System.out.println(temp2+"\n\n\n\n"+temp1);
+				if(!temp1.equals(temp2)) {
 					Test.ie.ecrireErreur("Erreur dans le SELECT \n\t mauvais attributs !");
+
 					return false;
 					/*
 					 * 
@@ -656,6 +667,8 @@ public class AnalyseReponse extends Arbre{
 					 * on peut comparer la taille pour savoir si il en manque ...
 					 */
 				}
+				JOptionPane jop1 = new JOptionPane();
+				jop1.showMessageDialog(null, "c la merde", "Information", JOptionPane.INFORMATION_MESSAGE);
 				/*
 				 * ON COMPARe LES TABLES
 				 */
@@ -669,56 +682,156 @@ public class AnalyseReponse extends Arbre{
 				curseurEleve++;
 				curseurProf++;
 				break;
-				
+
 			case(SQL.WHERE):
 				if(!arrayEleve.get(curseurEleve).equals(SQL.WHERE)) {
 					//teste l'equivalence
-				//	if(equivalent(requeteEleve,requeteProf))
+					//	if(equivalent(requeteEleve,requeteProf))
 					Test.ie.ecrireErreur("Erreur dans le WHERE \n\t il manque le WHERE");
 					return false;
 				}
-				curseurEleve++;
-				curseurProf++;
-				temp1=filtreAgregat(arrayProf.get(curseurProf));
-				temp2=filtreAgregat(arrayEleve.get(curseurEleve));
-				if(!temp1.equals(temp2)) {
-					Test.ie.ecrireErreur("Erreur dans le FROM \n\t table erronne");
-					return false;
-					/*
-					 * 
-					 * on peut comparer la taille pour savoir si il en manque ...
-					 */
-				}
+			curseurEleve++;
+			curseurProf++;
+			temp1=filtreAgregat(arrayProf.get(curseurProf));
+			temp2=filtreAgregat(arrayEleve.get(curseurEleve));
+			if(!temp1.equals(temp2)) {
+				Test.ie.ecrireErreur("Erreur dans le FROM \n\t table erronne");
+				return false;
 				/*
-				 * ON COMPARe LES TABLES
+				 * 
+				 * on peut comparer la taille pour savoir si il en manque ...
 				 */
+			}
+			/*
+			 * ON COMPARe LES TABLES
+			 */
 
-				temp1=filtreAgregat(arrayEleve.get(curseurEleve));
-				temp2=filtreAgregat(arrayProf.get(curseurProf));
-				if(!temp1.equals(temp2)) {
-					Test.ie.ecrireErreur("Erreur FROM \n\t ce ne sont pas les bonnes tables");
-					return false;
-				}
-				curseurEleve++;
-				curseurProf++;
-				break;
-				
-				
+			temp1=filtreAgregat(arrayEleve.get(curseurEleve));
+			temp2=filtreAgregat(arrayProf.get(curseurProf));
+			if(!temp1.equals(temp2)) {
+				Test.ie.ecrireErreur("Erreur FROM \n\t ce ne sont pas les bonnes tables");
+				return false;
+			}
+			curseurEleve++;
+			curseurProf++;
+			break;
+
+
 			default:
 				//Test.ie.ecrireErreur("On est dans la place");
 
-			/*	if(resultatIdentique) {
+				/*	if(resultatIdentique) {
 					System.out.println("Resultats identiques");
 					return true;
 				}*/
 
 			}
+			/*
+			 * 
+			 * nous ne somme pas parvenue a trouver de différences notables, c'est donc considéré comme juste...
+			 */
+			return true;
 		}
 		}
 		Test.ie.ecrireErreur("OK");
 		return true;
 	}
+	
+	public boolean comparateur(String requeteEleve, String requeteProf) {
+		ResultSet rs1 = null,rs2 =null;
+		/*
+		 * ICI on va tester si MySQL "accepte" la reque
+		 * c'est a dire si la requete est correcte d'un point de vue syntaxique 
+		 * et si les attributs et les noms des champs existent...
+		 * Sinon on sort et on explicite l'erreur
+		 */
 
+		try {
+			rs1 = Test.bdd.st.executeQuery(requeteEleve);
+			Test.bdd.afficherRes(rs1);
+		}catch (SQLException sqle) {
+			System.out.println(rs1);
+			String message = sqle.getMessage(); 
+			String sqlState = sqle.getSQLState(); 
+			int errorCode = sqle.getErrorCode(); 
+			System.out.println("Message = "+message); 
+			System.out.println("SQLState = "+sqlState); 
+			System.out.println("ErrorCode = "+errorCode); 
+			if(errorCode==1064) {
+				Test.ie.ecrireErreur("Erreur syntaxique, vérifier votre requête...\n");
+				return false;
+			}
+
+			System.out.println("Message = "+message); 
+
+			System.out.println(" (CompareReponse) La requete est incorrect !\n"+sqle);
+			Test.ie.ecrireErreur("Erreur SQL, vérifier votre requête...\n>>>"+message+"\n "+errorCode);
+
+			return false;
+		}
+		/*
+		 * le 2 requetes sont ok
+		 */
+		/*
+		 * 
+		 * comparaison des resultats
+		 * 
+		 */
+		boolean resultatIdentique=true;
+		System.out.println("La requete du prof est :: "+requeteProf+" et celle de l'eleve est "+requeteEleve);
+		Arbre arbreProf = decomposeArbre(requeteProf);
+		Arbre arbreEleve = decomposeArbre(requeteEleve);
+		System.out.println("<<<<<<<<<>>>>>>>>>>");
+		ArrayList<String> arrayProf = arbre2array(arbreProf);
+		ArrayList<String> arrayEleve = arbre2array(arbreEleve);
+		String temp;
+		ArrayList<String> arrayProf2 = new ArrayList<>();
+		ArrayList<String> arrayEleve2 = new ArrayList<>();
+		for(int i=0;i<arrayEleve.size();i++) {
+			temp=arrayEleve.get(i);
+			temp.replaceAll(" ", "");
+			arrayProf2.add(temp);
+		}
+		for(int i=0;i<arrayProf.size();i++) {
+			temp=arrayProf.get(i);
+			temp.replaceAll(" ", "");
+			arrayEleve2.add(temp);
+		}
+		int tailleEleve = arrayEleve2.size(), tailleProf = arrayProf2.size();
+		int fin = Integer.min(tailleEleve, tailleProf);
+		String zoneCourante = "REQUETE";
+		for (int i=0;i<fin;i++) {
+			System.out.println("--------------------------PROF : "+arrayProf2.get(i)+" ----------ELEVE "+arrayEleve2.get(i));
+			if(arrayProf2.get(i)==SQL.SELECT) {
+				zoneCourante=SQL.SELECT;
+			}else {
+				if(arrayProf2.get(i)==SQL.FROM) {
+					zoneCourante=SQL.FROM;
+					
+				}
+			}
+			if(arrayEleve2.get(i)==SQL.WHERE ) {
+			
+				/*
+				 * traitement du where
+				 */
+				
+			}else {
+				if(arrayEleve2.get(i).equals(arrayProf2.get(i))) {
+					/*
+					 * c'est ok on continue
+					 */
+				}else {
+					System.out.println("\n\n\n\n\n\n Erreur dans la zone : "+zoneCourante);
+					Test.ie.ecrireErreur("Erreur dans "+zoneCourante);
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	
 	public String filtreAgregat(String filte) {
 		String beta;
 		beta = filte.replaceAll("[|]| ", "");
@@ -727,7 +840,8 @@ public class AnalyseReponse extends Arbre{
 	public ArrayList<String> arbre2array(Arbre arbre){
 		ArrayList<String> array = new ArrayList<>();
 		Arbre courant;
-		array.add(arbre.getElement());
+		String element = arbre.getElement().replaceAll(" ","");
+		array.add(element);
 		courant=arbre;
 		while(courant.getDroite()!=null && courant.getGauche() != null) {
 			array.add(courant.getGauche().getElement());

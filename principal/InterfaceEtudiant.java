@@ -165,7 +165,7 @@ public class InterfaceEtudiant extends java.awt.Frame {
 				try {
 				boutonValiderActionPerformed(evt);
 			}catch(IndexOutOfBoundsException i) {
-				System.out.println("Erreur la ou tu sais");
+				System.out.println("erreur bouton valider" + i);
 			}
 			}
 				
@@ -339,10 +339,12 @@ public class InterfaceEtudiant extends java.awt.Frame {
 	public void ecrireErreur(String erreur) {
 		fenetreIndice.setForeground(new Color(155, 20, 20));
 		fenetreIndice.setText("\n\n\n\n\n\n\n\n\n\n"+erreur);
+		Test.xmlReponse("Erreur : "+erreur);
 	}
 	public void correct() {
 		fenetreIndice.setForeground(new Color(20, 200, 20));
 		fenetreIndice.setText("\n\n\n\n\n\n\n\n\tRéponse correct !");
+		Test.xmlReponse("Correct");
 		Test.nbEssais=0;
 	}
 	private void boutonValiderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonValiderActionPerformed
@@ -356,7 +358,6 @@ public class InterfaceEtudiant extends java.awt.Frame {
 		}catch(java.lang.NullPointerException e){
 			System.out.println(" < bouton valider  >Une erreur est survenue NULL POINTER EXECEPTION");
 		}finally {
-		
 			System.out.println("  < bouton valider  > Une erreur est survenue...");
 		}
 	}//GEN-LAST:event_boutonValiderActionPerformed
@@ -401,6 +402,8 @@ public class InterfaceEtudiant extends java.awt.Frame {
 
 	public void ecrireEnonce(String enonce) {
 		ennonceExercice.setText(enonce);
+		Test.xmlReponse("Question : "+enonce);
+		Test.xmlReponse("Réponse attendue : "+Test.exercice.exercice.get(Test.exercice.numQuestion).reponse);
 	}
 
 	// Variables declaration - do not modify//GEN-BEGIN:variables

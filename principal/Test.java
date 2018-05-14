@@ -89,6 +89,12 @@ public class Test {
         questionCourante.appendChild(nom);
 	}
 	
+	public static void xmlReponse(String reponse) {
+		Element nom = doc.createElement("Réponse");
+		nom.appendChild(doc.createTextNode(reponse));
+		System.out.println("Réponse : "+reponse);
+		questionCourante.appendChild(nom);
+	}
 	
 	public static void xmlFin() throws TransformerConfigurationException {
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
