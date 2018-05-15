@@ -329,6 +329,7 @@ public class InterfaceEtudiant extends java.awt.Frame {
 
 	private void boutonTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonTableActionPerformed
 		// TODO add your handling code here:
+		
 	}//GEN-LAST:event_boutonTableActionPerformed
 
 	public void ecrireIndice(String indice) {

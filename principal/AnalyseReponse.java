@@ -3,6 +3,7 @@ package projetTutore;
 import java.awt.List;
 import java.lang.reflect.Array;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -523,6 +524,13 @@ public class AnalyseReponse extends Arbre{
 		 * Sinon on sort et on explicite l'erreur
 		 */
 
+		
+		try {
+			rs2=Test.bdd.st.executeQuery(requeteProf);
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		try {
 			rs1 = Test.bdd.st.executeQuery(requeteEleve);
 			Test.bdd.afficherRes(rs1);
@@ -555,7 +563,13 @@ public class AnalyseReponse extends Arbre{
 		 * comparaison des resultats
 		 * 
 		 */
-		boolean resultatIdentique=true;
+		boolean resultatIdentique;
+		try {
+		resultatIdentique=comparer(rs1, rs2);
+		}catch (SQLException e) {
+			// TODO: handle exception
+			resultatIdentique=false;
+		}
 		System.out.println("La requete du prof est :: "+requeteProf+" et celle de l'eleve est "+requeteEleve);
 		Arbre arbreProf = decomposeArbre(requeteProf);
 		Arbre arbreEleve = decomposeArbre(requeteEleve);
@@ -686,8 +700,11 @@ public class AnalyseReponse extends Arbre{
 			case(SQL.WHERE):
 				if(!arrayEleve.get(curseurEleve).equals(SQL.WHERE)) {
 					//teste l'equivalence
-					//	if(equivalent(requeteEleve,requeteProf))
-					Test.ie.ecrireErreur("Erreur dans le WHERE \n\t il manque le WHERE");
+					if(resultatIdentique) {
+						Test.ie.ecrireErreur("Les clauses du WHERE ne sont pas n�cessaires");
+						return true;
+					}
+					Test.ie.ecrireErreur("Erreur dans le WHERE \n\t il manque les clauses dans le WHERE");
 					return false;
 				}
 			curseurEleve++;
@@ -695,7 +712,10 @@ public class AnalyseReponse extends Arbre{
 			temp1=filtreAgregat(arrayProf.get(curseurProf));
 			temp2=filtreAgregat(arrayEleve.get(curseurEleve));
 			if(!temp1.equals(temp2)) {
-				Test.ie.ecrireErreur("Erreur dans le FROM \n\t table erronne");
+				/*
+				 * on test si les resultats sont les memes
+				 */
+				Test.ie.ecrireErreur("Erreur dans le WHERE \n\t table erronne");
 				return false;
 				/*
 				 * 
@@ -737,6 +757,74 @@ public class AnalyseReponse extends Arbre{
 		return true;
 	}
 	
+	
+	
+	/**
+     * retourne true si les RS correspondent, false sinon
+     * @param rs1
+     * @param rs2
+     * @return 
+     */
+    public static boolean comparer(ResultSet rs1, ResultSet rs2) throws SQLException
+    {
+        /* recup rsmd */
+        ResultSetMetaData rsmd1, rsmd2;
+        rsmd1 = rs1.getMetaData();
+        rsmd2 = rs2.getMetaData();
+        
+        /* comparer nb colonnes */
+        int nbCol1 = rsmd1.getColumnCount();
+        int nbCol2 = rsmd2.getColumnCount();
+        if (nbCol1 != nbCol2) 
+            return false;
+        
+        /* comparer nom colonne */
+        String[] nomsCol1 = new String[nbCol1];
+        String[] nomsCol2 = new String[nbCol1];
+        for (int i=0; i<nbCol1; i++)
+        {
+            nomsCol1[i] = rsmd1.getColumnName(i+1);
+            nomsCol2[i] = rsmd2.getColumnName(i+1);
+        }
+        for (String w:nomsCol1)
+        {
+            if (!estDedans(w, nomsCol2))
+                return false;
+        }
+        
+        /* comparer type colonne */
+        String[] typeCol1 = new String[nbCol1];
+        String[] typeCol2 = new String[nbCol1];
+        for (int i=0; i<nbCol1; i++)
+        {
+            typeCol1[i] = rsmd1.getColumnTypeName(i+1);
+            typeCol2[i] = rsmd2.getColumnTypeName(i+1);
+        }
+        for (String w:typeCol1)
+        {
+            if (!estDedans(w, typeCol2))
+                return false;
+        }
+        
+        /* tous les tests n'ont donné de différence */
+        return true;
+    }
+    
+    /**
+     * retourne true si w est dans a, sinon retourne false
+     * @param w
+     * @param a
+     * @return 
+     */
+    public static boolean estDedans(String w, String[] a)
+    {
+        for (String s:a)
+        {
+            if (w.equalsIgnoreCase(s))
+                return true;
+        }
+        return false;
+    }
 	public boolean comparateur(String requeteEleve, String requeteProf) {
 		ResultSet rs1 = null,rs2 =null;
 		/*

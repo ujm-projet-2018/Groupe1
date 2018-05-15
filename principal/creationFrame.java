@@ -136,6 +136,8 @@ public class creationFrame extends javax.swing.JFrame {
         bValider.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 bValiderMouseClicked(evt);
+                JOptionPane jop1 = new JOptionPane();
+        		jop1.showMessageDialog(null, "Exercice crée", "Information", JOptionPane.INFORMATION_MESSAGE);
             }
         });
 
